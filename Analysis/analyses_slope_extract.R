@@ -13,53 +13,15 @@
 rm(list=ls(all=TRUE))
 
 # Prepare the data --------------------------------------------------------
-
-setwd("C:/Users/Oksana/Nextcloud/Jena2/JenFlow (Sebastian Meyer)/JenFlow2/Effects_slopes/Fluxes")
-Index <- readr::read_csv("net_ind_fluxes.csv")
+Index <- readr::read_csv("Data/net_ind_fluxes.csv")
 str(Index)
 
-# Clean the column headers
-names(Index) # data have special characters: "->", "*" and white spaces
-# Meaning of the characters and abbreviations:
-## "->" is flow # rename to "_"
-## "*" is environment # rename to "o"
-    # (i.e. "*->" flow into the system; "->*" flow out of the system from external environmnt)
-## AG - aboveground, BG - belowground
-## SOM - soil organic matter
-
-# Clean the names-----
-# Index[14:66] <-janitor::clean_names(Index[14:66], case = c("mixed")) 
-  # gives not very meaningful names
-
-# Rename the food-web variables with new characters:
+# Meaning of column names
+names(Index) 
 # "_" is flow
 # "o" is out of system environment
 #  Other abbreviations in the names of trophic groups are: 
-   #"AG" - aboveground, "BG" - belowground, "SOM" - soil organic matter
-
-names(Index)[14:66] <- c(
- # system inflow (carbon uptake by plants)
-  "o_Plants",
- # internal flows (between trophic groups)
-  "Plants_AG.Herbivores", "AG.Herbivores_AG.Carnivores", "AG.Decomposers_AG.Carnivores", 
-  "Plants_AG.Omnivores",  "AG.Herbivores_AG.Omnivores", "AG.Decomposers_AG.Omnivores", 
-  "AG.Litter_AG.Omnivores", "AG.Litter_AG.Decomposers", "BG.Herbivores_BG.Carnivores",
-  "BG.Decomposers_BG.Carnivores", "Plants_BG.Herbivores", "SOM_BG.Decomposers", 
-  "Plants_BG.Omnivores", "BG.Herbivores_BG.Omnivores", "BG.Decomposers_BG.Omnivores",
-  "SOM_BG.Omnivores", "Soil.Microorganisms_BG.Omnivores", "Plants_SOM", "BG.Carnivores_SOM",               
-  "BG.Herbivores_SOM", "BG.Decomposers_SOM", "BG.Omnivores_SOM", "AG.Litter_SOM",
-  "Soil.Microorganisms_SOM", "Plants_AG.Litter", "AG.Herbivores_AG.Litter", "AG.Carnivores_AG.Litter",
-  "AG.Omnivores_AG.Litter", "AG.Decomposers_AG.Litter", "SOM_Soil.Microorganisms",
- # system outflows (respirations)
-  "Plants_o", "AG.Herbivores_o", "AG.Carnivores_o", "AG.Omnivores_o", "AG.Decomposers_o",
-  "BG.Carnivores_o", "BG.Herbivores_o", "BG.Decomposers_o", "BG.Omnivores_o",
-  "Soil.Microorganisms_o",
- # standing biomass stocks
-  "Plants.Stock", "AG.Herbivores.Stock", "AG.Carnivores.Stock", "AG.Omnivores.Stock",
-  "AG.Decomposers.Stock", "BG.Herbivores.Stock", "BG.Carnivores.Stock", "BG.Omnivores.Stock",
-  "BG.Decomposers.Stock", "Soil.Microorganisms.Stock", "AG.Litter.Stock", "SOM.Stock"
-       )
-names(Index)
+# "AG" - aboveground, "BG" - belowground, "SOM" - soil organic matter
 
 
 # Analyses --------------------------------------------------------------
