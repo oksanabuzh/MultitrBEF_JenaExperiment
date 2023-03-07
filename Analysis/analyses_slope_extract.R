@@ -122,3 +122,23 @@ names(results_S2) <- c("y", "formula",
 names(results_S2)
 
 write.csv(results_S2,  file = "results_S2.csv")
+
+
+# Run models with all variables -------------------------------------------
+
+# load the function
+source("Analysis/run_model_all_variables.R")
+
+# Define all interesting first variables (x) and all responses 
+all_models <- expand_grid(
+  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef"),
+  responses = names(Index[14:66])
+)
+
+# Run the `run_model_all_vars` function for each line of `all_models`
+# ..1 stands for the first column of `all_models`, i.e. x
+# ..2 stands for the second column of `all_models`, i.e. y
+mod <- purrr::pmap_df(all_models, ~run_model_all_vars(first = ..1, y = ..2,
+                                                      dat = Index))
+
+
