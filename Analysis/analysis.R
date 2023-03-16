@@ -1,13 +1,12 @@
 # Buzhdygan et al.   "Facets of plant diversity  differentially affect energy dynamics 
 #  in grasslands depending on trophic contexts"
 # in 'Ecology'
+# oksana.buzh@fu-berlin.de
+
 
 # Tests for the effects of each diversity facet on each stock and flow across the food web
 # Main analysis (in the main text) and supplementary analeses
 
-# Oksana Buzhdygan 
-# oksana.buzh@fu-berlin.de
-# 28.10.2022
 
 library(tidyverse)
 library(glue)
@@ -50,9 +49,13 @@ mod <- purrr::pmap_df(all_models, ~run_model_all_vars(
   dat = Index,
   first = ..1, 
   y = ..2, 
-  type = 1 # type 1 sum of squares with anova
+  type = 1 # type 1 sum of squares with anova()
 ))
 
+str(mod)
+summary(mod)
+
+write_csv(mod, "Data/mod_main_text.csv")
 
 # Analysis supplementary --------------------------------------------------
 # Run the `run_model_all_vars` function for each line of `all_models`
@@ -63,9 +66,13 @@ mod_supp <- purrr::pmap_df(all_models, ~run_model_all_vars(
   dat = Index,
   first = ..1, 
   y = ..2, 
-  type = 2 # type 1 sum of squares with anova
+  type = 2 # type 2 sum of squares with car::Anova()
 ))
 
+str(mod_supp)
+summary(mod_supp)
+
+write_csv(mod_supp, "Data/mod_supp.csv")
 
 # Check results -----------------------------------------------------------
 
