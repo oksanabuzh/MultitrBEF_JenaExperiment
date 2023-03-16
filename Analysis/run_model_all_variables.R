@@ -1,45 +1,53 @@
-#' Run linear models with multiple predictors 
+#' Run linear models with multiple predictors
 #'
 #' @param dat a tibble or data frame containing the variables used in the model
+#' @param first the name of the first predictor variable after block
 #' @param y the name of the response variable in `dat`
-#' @param first the name of the rist predictor variable after block
+#' @param type which type sum of squares should be used? If type = 1, anova is used,
+#'    if type = 2, car::Anova function is used to calculate significance
 #' @param all_vars a vector with all other predictor variables used in the model after
 #'     the `first` variable
 #' @param boxcox logical, should the response be transformed with boxcos?
 #'
 #' @return a tibble with the partial r2 for the first predictor, information on the
 #'     formula used in the model and the respons variable
-run_model_all_vars <- function(dat, y, first,
+run_model_all_vars <- function(dat, first, y, type,
                                all_vars = c(
                                  "sowndiv", "numfg", "leg.ef",
                                  "gr.ef", "sh.ef", "th.ef"
                                ),
                                boxcox = TRUE) {
+  # to debug
+  # dat <- Index
+  # y <- "o_Plants"
+  # first <- "leg.ef"
+  # type <- 1
+  # boxcox <- TRUE
+  # all_vars = c(
+  #   "sowndiv", "numfg", "leg.ef",
+  #   "gr.ef", "sh.ef", "th.ef"
+  # )
+  
+
   # remove the first variable from the list of all_vars
   all_vars <- all_vars[!(all_vars == first)]
-
-  # Turn sowndiv into log2
-  if (first == "sowndiv") {
-    first <- "log2(sowndiv)"
-  } else {
-    all_vars[all_vars == "sowndiv"] <- "log2(sowndiv)"
-  }
 
   # Remove numfg from predictors if the first is not numfg
   # numfg is correlated with the other predictors
   if (first == "numfg") {
-    all_vars <- "log2(sowndiv)"
+    all_vars <- "sowndiv"
   } else {
     all_vars <- all_vars[!(all_vars == "numfg")]
   }
 
-  # step 1: create the model formula as text
+# step 1: create the model formula as text --------------------------------
   model_formula <- paste0(
     y, " ~ block + ", first, " + ",
     paste0(all_vars, collapse = " + ")
   )
 
-  # step 2: Do boxcox transformation if you want (by default it's done)
+
+# step 2: Do boxcox transformation if you want (by default it's do --------
   if (boxcox) {
     bc <- MASS::boxcox(as.formula(model_formula), data = dat, plotit = FALSE)
     # find the maximum y and extract lamda (see here: https://www.statology.org/box-cox-transformation-in-r/)
@@ -60,20 +68,90 @@ run_model_all_vars <- function(dat, y, first,
     lambda <- NA
   }
 
-  # step 2: Fit the model
+# step 3: Fit the model ---------------------------------------------------
+
   model <- lm(as.formula(model_formula), data = dat)
   
-  # Step 3: Get partial R2
-  r2 <- tibble::as_tibble(rsq::rsq.partial(model))
+
+# step 4: Get model coefficients and p-values -----------------------------
+
+  # partial R2
+  r2 <- tibble::as_tibble(r2glmm::r2beta(model, method = "nsj", partial = TRUE))
+
+  # p-value with anova or Anova
+  if (type == 1) {
+    pval <- tibble::as_tibble(anova(model)) %>%
+      mutate(variable = rownames(anova(model)))
+  } else if (type == 2) {
+    pval <- tibble::as_tibble(car::Anova(model)) %>%
+      mutate(variable = rownames(car::Anova(model)))
+  } else {
+    stop(paste0("Error when calculating significance. Type argument must be
+                1 for anova or 2 vor car::Anova, but value is ", type, " instead."))
+  }
+
+  # effect size
   
-  # put result in a list
+  # find min and max x
+  x_min <- dat %>%
+    select(all_of(first)) %>%
+    min()
+  x_max <- dat %>%
+    select(all_of(first)) %>%
+    max()
+  
+  # calculate means of all numerical predictors and add blocks
+  x_all_vars <- dat %>%
+    summarise(across(
+      .cols = all_of(all_vars),
+      .fns = \(x) mean(x, na.rm = TRUE)
+    )) %>%
+    expand_grid(block = unique(dat$block))
+
+  # predict y for xmin and xmax
+  y_min <- predict(model, newdata = x_all_vars %>%
+    mutate("{first}" := x_min)) %>%
+    mean()
+  y_max <- predict(model, newdata = x_all_vars %>%
+    mutate("{first}" := x_max)) %>%
+    mean()
+
+  # back-transform y_min and y_max
+  if (lambda == 0) {
+    back_y_min <- exp(y_min)
+    back_y_max <- exp(y_max)
+  } else {
+    back_y_min <- (y_min * lambda + 1)^(1 / lambda)
+    back_y_max <- (y_max * lambda + 1)^(1 / lambda)
+  }
+  
+  # calculate back-transformed effect sizes
+  effect_size <- (back_y_max - back_y_min) / (x_max - x_min)
+
+  # standardize effect size
+  # calculate standard deviation of x and y from data
+  sd_values <- dat %>% summarise(across(
+    .cols = all_of(c(first, y)),
+    .fns = \(x) sd(x, na.rm = TRUE)
+  ))
+  
+  # standardize the effect_size
+  effect_size_st <- effect_size * (sd_values %>% pull(first) / sd_values %>% pull(y))
+
+
+# Combine and return results ----------------------------------------------
+
   result <- tibble(
-    y = y, 
-    rsq_part = r2 %>% filter(variable == first) %>% pull(partial.rsq) %>% round(4),
+    response = y,
     predictor = first,
+    r2_part = r2 %>% filter(Effect == first) %>% pull(Rsq) %>% round(3),
+    R2_model = summary(model)$r.squared,
+    p = pval %>% filter(variable == first) %>% pull(`Pr(>F)`),
+    estimate = summary(model)$coefficients[first, "Estimate"],
+    effect_size = effect_size,
+    effect_size_st = effect_size_st,
+    lambda = lambda,
     formula = model_formula
   )
-  
-  # Return the model formula and the partial r2 for the variable of interest
   return(result)
 }
