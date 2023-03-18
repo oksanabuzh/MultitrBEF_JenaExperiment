@@ -246,4 +246,5 @@ df_SI %>%
 
 
 
-# matches the Example , except that the Estimate now is the slope for block 1, while in the Example 1 it is the intercept
+# the results of the comparisons match the Example 1, except that the Estimate now is the slope for block 1, while in the Example 1 it is the intercept
+# but what we need is that the Estimate should be the slope of our turget predictor
