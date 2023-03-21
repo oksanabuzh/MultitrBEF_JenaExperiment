@@ -17,8 +17,9 @@ run_model_all_vars <- function(dat, first, y, type,
                                  "gr.ef", "sh.ef", "th.ef"
                                ),
                                boxcox = TRUE) {
- 
-    # remove the first variable from the list of all_vars
+  first <- as.character(first)
+  y <- as.character(y)
+  # remove the first variable from the list of all_vars
   all_vars <- all_vars[!(all_vars == first)]
 
   # Remove numfg from predictors if the first is not numfg
@@ -65,12 +66,10 @@ run_model_all_vars <- function(dat, first, y, type,
   model <- lm(as.formula(model_formula), data = dat)
 
   # step 4: Get model coefficients and p-values -----------------------------
-
   # partial R2
-  r2_part <- tibble::as_tibble(r2glmm::r2beta(model, method = "nsj", partial = TRUE)) %>%
-    filter(Effect == first) %>%
-    pull(Rsq) %>%
-    round(3)
+  r2_part <- r2glmm::r2beta(model, method = "nsj", partial = TRUE)
+  r2_part <- filter(r2_part, Effect == first)
+  r2_part <- round(r2_part$Rsq, 3)
 
   # p-value with anova or Anova
   if (type == 1) {
@@ -84,8 +83,7 @@ run_model_all_vars <- function(dat, first, y, type,
                 1 for anova or 2 vor car::Anova, but value is ", type, " instead."))
   }
 
-  pval <- pval %>%
-    filter(variable == first) %>%
+  pval <- filter(pval, variable == first) %>%
     pull(`Pr(>F)`)
 
   # Extract model results ---------------------------------------------------
@@ -101,24 +99,21 @@ run_model_all_vars <- function(dat, first, y, type,
   # if first is sowndiv, we need to remove the log2 to extract the correct coeff
   if (first == "log2(sowndiv)") {
     first <- "sowndiv"
-  } else if ("log2(sowndiv)" %in% all_vars){
+  } else if ("log2(sowndiv)" %in% all_vars) {
     all_vars[all_vars == "log2(sowndiv)"] <- "sowndiv"
   }
 
   # find min and max x
-  x_min <- dat %>%
-    select(all_of(first)) %>%
+  x_min <- select(dat, all_of(first)) %>%
     min()
-  x_max <- dat %>%
-    select(all_of(first)) %>%
+  x_max <- select(dat, all_of(first)) %>%
     max()
 
   # calculate means of all numerical predictors and add blocks
-  x_all_vars <- dat %>%
-    summarise(across(
-      .cols = all_of(all_vars),
-      .fns = \(x) mean(x, na.rm = TRUE)
-    )) %>%
+  x_all_vars <- summarise(dat, across(
+    .cols = all_of(all_vars),
+    .fns = \(x) mean(x, na.rm = TRUE)
+  )) %>%
     expand_grid(block = unique(dat$block))
 
   # predict y for xmin and xmax
@@ -143,7 +138,7 @@ run_model_all_vars <- function(dat, first, y, type,
 
   # standardize effect size
   # calculate standard deviation of x and y from data
-  sd_values <- dat %>% summarise(across(
+  sd_values <- summarise(dat, across(
     .cols = all_of(c(first, y)),
     .fns = \(x) sd(x, na.rm = TRUE)
   ))
@@ -153,7 +148,7 @@ run_model_all_vars <- function(dat, first, y, type,
 
   # Combine and return results ----------------------------------------------
 
-  result <- tibble(
+  result <- list(
     response = y,
     predictor = first,
     r2_part = r2_part,

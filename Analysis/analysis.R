@@ -3,10 +3,8 @@
 # in 'Ecology'
 # oksana.buzh@fu-berlin.de
 
-
 # Tests for the effects of each diversity facet on each stock and flow across the food web
 # Main analysis (in the main text) and supplementary analeses
-
 
 library(tidyverse)
 library(glue)
