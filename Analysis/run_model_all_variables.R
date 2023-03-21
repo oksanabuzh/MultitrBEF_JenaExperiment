@@ -17,27 +17,20 @@ run_model_all_vars <- function(dat, first, y, type,
                                  "gr.ef", "sh.ef", "th.ef"
                                ),
                                boxcox = TRUE) {
-  # to debug
-  # dat <- Index
-  # y <- "o_Plants"
-  # first <- "leg.ef"
-  # type <- 1
-  # boxcox <- TRUE
-  # all_vars = c(
-  #   "sowndiv", "numfg", "leg.ef",
-  #   "gr.ef", "sh.ef", "th.ef"
-  # )
-
-
-  # remove the first variable from the list of all_vars
+ 
+    # remove the first variable from the list of all_vars
   all_vars <- all_vars[!(all_vars == first)]
 
   # Remove numfg from predictors if the first is not numfg
   # numfg is correlated with the other predictors
   if (first == "numfg") {
-    all_vars <- "sowndiv"
+    all_vars <- "log2(sowndiv)"
+  } else if (first == "sowndiv") {
+    first <- "log2(sowndiv)"
+    all_vars <- all_vars[!(all_vars == "numfg")]
   } else {
     all_vars <- all_vars[!(all_vars == "numfg")]
+    all_vars[all_vars == "sowndiv"] <- "log2(sowndiv)"
   }
 
   # step 1: create the model formula as text --------------------------------
@@ -45,7 +38,6 @@ run_model_all_vars <- function(dat, first, y, type,
     y, " ~ block + ", first, " + ",
     paste0(all_vars, collapse = " + ")
   )
-
 
   # step 2: Do boxcox transformation if you want (by default it's do --------
   if (boxcox) {
@@ -72,11 +64,13 @@ run_model_all_vars <- function(dat, first, y, type,
 
   model <- lm(as.formula(model_formula), data = dat)
 
-
   # step 4: Get model coefficients and p-values -----------------------------
 
   # partial R2
-  r2 <- tibble::as_tibble(r2glmm::r2beta(model, method = "nsj", partial = TRUE))
+  r2_part <- tibble::as_tibble(r2glmm::r2beta(model, method = "nsj", partial = TRUE)) %>%
+    filter(Effect == first) %>%
+    pull(Rsq) %>%
+    round(3)
 
   # p-value with anova or Anova
   if (type == 1) {
@@ -90,7 +84,26 @@ run_model_all_vars <- function(dat, first, y, type,
                 1 for anova or 2 vor car::Anova, but value is ", type, " instead."))
   }
 
+  pval <- pval %>%
+    filter(variable == first) %>%
+    pull(`Pr(>F)`)
+
+  # Extract model results ---------------------------------------------------
+
+  # estimates
+  estimates <- summary(model)$coefficients %>%
+    as.data.frame() %>%
+    rownames_to_column("x") %>%
+    filter(x == first) %>%
+    pull(Estimate)
+
   # effect size
+  # if first is sowndiv, we need to remove the log2 to extract the correct coeff
+  if (first == "log2(sowndiv)") {
+    first <- "sowndiv"
+  } else if ("log2(sowndiv)" %in% all_vars){
+    all_vars[all_vars == "log2(sowndiv)"] <- "sowndiv"
+  }
 
   # find min and max x
   x_min <- dat %>%
@@ -138,21 +151,15 @@ run_model_all_vars <- function(dat, first, y, type,
   # standardize the effect_size
   effect_size_st <- effect_size * (sd_values %>% pull(first) / sd_values %>% pull(y))
 
-  # estimates
-  estimates <- summary(model)$coefficients %>%
-    as.data.frame() %>%
-    rownames_to_column("x")
-
-
   # Combine and return results ----------------------------------------------
 
   result <- tibble(
     response = y,
     predictor = first,
-    r2_part = r2 %>% filter(Effect == first) %>% pull(Rsq) %>% round(3),
+    r2_part = r2_part,
     R2_model = summary(model)$r.squared,
-    p = pval %>% filter(variable == first) %>% pull(`Pr(>F)`),
-    estimate = estimates %>% filter(x == first) %>% pull(Estimate),
+    p = pval,
+    estimate = estimates,
     effect_size = effect_size,
     effect_size_st = effect_size_st,
     lambda = lambda,

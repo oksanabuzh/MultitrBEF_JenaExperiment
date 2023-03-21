@@ -24,9 +24,6 @@ names(Index)
 #  Other abbreviations in the names of trophic groups are: 
 # "AG" - aboveground, "BG" - belowground, "SOM" - soil organic matter
 
-# Log transform sowndiv variable
-Index <- mutate(Index, sowndiv = log2(sowndiv))
-
 # Analysis -----------------------------------------------------------------
 
 # Models are calculated with the following form:
