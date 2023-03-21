@@ -27,7 +27,7 @@ run_model_all_vars <- function(dat, first, y, type,
   #   "sowndiv", "numfg", "leg.ef",
   #   "gr.ef", "sh.ef", "th.ef"
   # )
-  
+
 
   # remove the first variable from the list of all_vars
   all_vars <- all_vars[!(all_vars == first)]
@@ -40,14 +40,14 @@ run_model_all_vars <- function(dat, first, y, type,
     all_vars <- all_vars[!(all_vars == "numfg")]
   }
 
-# step 1: create the model formula as text --------------------------------
+  # step 1: create the model formula as text --------------------------------
   model_formula <- paste0(
     y, " ~ block + ", first, " + ",
     paste0(all_vars, collapse = " + ")
   )
 
 
-# step 2: Do boxcox transformation if you want (by default it's do --------
+  # step 2: Do boxcox transformation if you want (by default it's do --------
   if (boxcox) {
     bc <- MASS::boxcox(as.formula(model_formula), data = dat, plotit = FALSE)
     # find the maximum y and extract lamda (see here: https://www.statology.org/box-cox-transformation-in-r/)
@@ -68,12 +68,12 @@ run_model_all_vars <- function(dat, first, y, type,
     lambda <- NA
   }
 
-# step 3: Fit the model ---------------------------------------------------
+  # step 3: Fit the model ---------------------------------------------------
 
   model <- lm(as.formula(model_formula), data = dat)
-  
 
-# step 4: Get model coefficients and p-values -----------------------------
+
+  # step 4: Get model coefficients and p-values -----------------------------
 
   # partial R2
   r2 <- tibble::as_tibble(r2glmm::r2beta(model, method = "nsj", partial = TRUE))
@@ -91,7 +91,7 @@ run_model_all_vars <- function(dat, first, y, type,
   }
 
   # effect size
-  
+
   # find min and max x
   x_min <- dat %>%
     select(all_of(first)) %>%
@@ -99,7 +99,7 @@ run_model_all_vars <- function(dat, first, y, type,
   x_max <- dat %>%
     select(all_of(first)) %>%
     max()
-  
+
   # calculate means of all numerical predictors and add blocks
   x_all_vars <- dat %>%
     summarise(across(
@@ -124,7 +124,7 @@ run_model_all_vars <- function(dat, first, y, type,
     back_y_min <- (y_min * lambda + 1)^(1 / lambda)
     back_y_max <- (y_max * lambda + 1)^(1 / lambda)
   }
-  
+
   # calculate back-transformed effect sizes
   effect_size <- (back_y_max - back_y_min) / (x_max - x_min)
 
@@ -134,12 +134,17 @@ run_model_all_vars <- function(dat, first, y, type,
     .cols = all_of(c(first, y)),
     .fns = \(x) sd(x, na.rm = TRUE)
   ))
-  
+
   # standardize the effect_size
   effect_size_st <- effect_size * (sd_values %>% pull(first) / sd_values %>% pull(y))
 
+  # estimates
+  estimates <- summary(model)$coefficients %>%
+    as.data.frame() %>%
+    rownames_to_column("x")
 
-# Combine and return results ----------------------------------------------
+
+  # Combine and return results ----------------------------------------------
 
   result <- tibble(
     response = y,
@@ -147,7 +152,7 @@ run_model_all_vars <- function(dat, first, y, type,
     r2_part = r2 %>% filter(Effect == first) %>% pull(Rsq) %>% round(3),
     R2_model = summary(model)$r.squared,
     p = pval %>% filter(variable == first) %>% pull(`Pr(>F)`),
-    estimate = summary(model)$coefficients[first, "Estimate"],
+    estimate = estimates %>% filter(x == first) %>% pull(Estimate),
     effect_size = effect_size,
     effect_size_st = effect_size_st,
     lambda = lambda,
