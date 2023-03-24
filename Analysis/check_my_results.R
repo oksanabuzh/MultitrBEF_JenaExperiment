@@ -1,7 +1,7 @@
 # check the model results 
 # run manually different models randomly and check the results with the ones derived by the function
 
-
+library(tidyverse)
 Index <- readr::read_csv("Data/net_ind_fluxes.csv")
 str(Index)
 
@@ -27,7 +27,7 @@ par(mfrow = c(1, 1))
 
 bc <- MASS::boxcox(m1, data = Index, plotit = FALSE)
 lambda <- bc$x[which.max(bc$y)]
-
+lambda
 # [1] -0.1
 
 #fit new linear regression model using the Box-Cox transformation
@@ -103,7 +103,7 @@ anova(m2)["log2(sowndiv)", "Pr(>F)"] # p value
 summary(m2)$r.squared 
 #R2 partial
 r2glmm::r2beta(m2, method = "nsj", partial = TRUE)%>%
-filter(Effect == "log2(sowndiv)") %>% pull(Rsq) %>% round(3)
+filter(Effect == "sowndiv_log2") %>% pull(Rsq) %>% round(3)
 
 back_tr_predicted_estimate #  back-transformed effect size
 
@@ -115,6 +115,10 @@ df_main %>%
   filter(response=="Plants.Stock", predictor=="sowndiv") %>% 
   select(lambda, estimate, p, R2_model, r2_part, effect_size, effect_size_st)
 
+
+# check the range of the standardized coefficients
+df_main %>%
+  summarise(min=min(effect_size_st), max=max(effect_size_st), mean=mean(effect_size_st))
 
 # compare with the supplementary ----
 # for this we use car::Anova()  -- type II
@@ -130,12 +134,7 @@ df_SI %>%
 
 
 
-# Mismatch:
-# the estimate is intercept and not slope 
-# effect_size and the effect_size_st do not match the manually derived results
-
-
-
+# all results match completely:
 
 
 ##############
