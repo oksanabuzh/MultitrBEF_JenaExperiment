@@ -2,6 +2,7 @@
 # run manually different models randomly and check the results with the ones derived by the function
 
 library(tidyverse)
+library(MASS)
 Index <- readr::read_csv("Data/net_ind_fluxes.csv")
 str(Index)
 
