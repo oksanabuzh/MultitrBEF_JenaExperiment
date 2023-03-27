@@ -1,8 +1,17 @@
-# Proportions of effects
+# Summery statistics for the proportions of effects of each biodiversity facet
+
+
+
+# Packages
 library(tidyverse)
+library(rcompanion)
+
+
+
 
 # 1. for the analysis in the main text----
 
+# Data
 df_main <- read_csv("Results/mod_main_text.csv")
 str(df_main)
 
