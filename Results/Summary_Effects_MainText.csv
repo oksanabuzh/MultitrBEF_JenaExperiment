@@ -1,0 +1,16 @@
+predictor,Dimens,Eff_sighn,sum,AG,AG_BG,BG,Total,AG_pr,BG_pr,Total_pr
+gr.ef,flow,negative,41,2,0,0,2,4.88,0,4.88
+gr.ef,flow,positive,41,1,1,6,8,2.44,14.63,19.51
+gr.ef,stock,negative,12,1,0,0,1,8.33,0,8.33
+gr.ef,stock,positive,12,0,1,1,2,0,8.33,16.67
+leg.ef,flow,positive,41,9,0,2,11,21.95,4.88,26.83
+leg.ef,stock,positive,12,3,0,2,5,25,16.67,41.67
+numfg,flow,negative,41,1,0,0,1,2.44,0,2.44
+numfg,flow,positive,41,4,1,3,8,9.76,7.32,19.51
+numfg,stock,positive,12,2,1,2,5,16.67,16.67,41.67
+sh.ef,flow,positive,41,6,1,3,10,14.63,7.32,24.39
+sh.ef,stock,positive,12,1,1,1,3,8.33,8.33,25
+sowndiv,flow,positive,41,12,1,3,16,29.27,7.32,39.02
+sowndiv,stock,positive,12,3,1,2,6,25,16.67,50
+th.ef,flow,positive,41,1,1,0,2,2.44,0,4.88
+th.ef,stock,positive,12,0,1,0,1,0,0,8.33
