@@ -9,6 +9,7 @@ library(rcompanion)
 
 library(plyr)
 library(reshape)
+library(Rmisc)
 library(forcats)
 
 # Data main
@@ -27,138 +28,118 @@ df_all <- df_main %>%
   pivot_wider(names_from = "predictor", values_from = "effect_size_st")
 
 str(df_all)
+
 # Get descriptive statistics----
+
 ## for trophic group----
+
+Rmisc::CI(df_all$sowndiv, ci = 0.95)
 
 Tr_Group<- df_all$Tr_Group
 tmp <- df_all[,7:12]
-
 d <- ddply(tmp, c("Tr_Group"),
-                      function(x) rbind(apply(x,2,mean),
-                                        apply(x,2,sd),
-                                        apply(x,2,function(y)as.vector(t.test(y, conf.level = 0.95)$conf.int))
-                                        ))
+           function(x) rbind(apply(x,2,sd),
+                             apply(x,2,function(y)Rmisc::CI(y, ci = 0.95)),
+                             apply(x,2,function(y)quantile(y,c(0.05,0.95)))
+           ))
+d
 
-# line 39 does not work
-
-d$stat <- c(rep(c("mean","sd","ci95.lower","ci95.upper")))
+d$stat <- c(rep(c("sd","ci_upper","mean","ci_lower","qntl_lower", "qntl_upper")))
 
 y <- melt(d,c("Tr_Group","stat"))
-Stock.stat_Tr_Group <-  cast(y, ... ~ variable+stat)
+stat_TrGroup <-  cast(y, ... ~ variable+stat)
 
-# alternative:
+stat_TrGroup <- stat_TrGroup %>%  
+  dplyr::rename(Group=Tr_Group)
 
-Tr_Gr <- df_all %>% 
-  group_by(Tr_Group) %>% 
-  summarize_at(vars(sowndiv, numfg, leg.ef, gr.ef, sh.ef, th.ef), 
-               list(mean = mean, 
-                    sd = sd, 
-                    CI_5 = as.vector(t.test(conf.level = 0.95)$conf.int)[1],
-                    CI_25= as.vector(t.test(conf.level = 0.95)$conf.int)[2]))
-# lines 56 and 57 do not work
- 
+names(stat_TrGroup)
 
+# check result:
+df_check <- df_all %>% 
+  filter(Tr_Group=="Herbivores")
 
-Tr_Gr <- df_all %>% 
-  group_by(Tr_Group) %>% 
-  summarize(CI_5 = (t.test(sowndiv, conf.level = 0.95)$conf.int)[1],
-            CI_25= (t.test(sowndiv, conf.level = 0.95)$conf.int)[2])
-
-Tr_Gr
-# does not give results for the separate groups
+  
+Rmisc::CI(df_check$sowndiv, ci = 0.95)
 
 
 
-# End
+## for trophic level-----
 
-#####################################
+Tr_level<- df_all$Tr_level
+tmp <- df_all[,7:12]
+d_TL <- ddply(tmp, c("Tr_level"),
+           function(x) rbind(apply(x,2,sd),
+                             apply(x,2,function(y)Rmisc::CI(y, ci = 0.95)),
+                             apply(x,2,function(y)quantile(y,c(0.05,0.95)))
+           ))
+d_TL
 
-Tr_Gr <- df_all %>% 
-  group_by(Tr_Group) %>% 
-  summarize_at(vars(sowndiv, numfg, leg.ef, gr.ef, sh.ef, th.ef), 
-               list(mean = mean, sd = sd))
-                    
-Tr_Gr
+d_TL$stat <- c(rep(c("sd","ci_upper","mean","ci_lower","qntl_lower", "qntl_upper")))
 
-str(Tr_Gr)
-
-as.vector(t.test(df_all$sowndiv, conf.level = 0.95)$conf.int)[2]
-
-test2 <- t.test(df_all$sowndiv, conf.level = 0.95)
-test2$conf.int
+y_TL <- melt(d_TL,c("Tr_level","stat"))
+stat_Tr_level <-  cast(y_TL, ... ~ variable+stat)
 
 
+stat_Tr_level <- stat_Tr_level %>%  
+  dplyr::rename(Group=Tr_level)
 
+names(stat_Tr_level)
 
-# --- Descriptive Statistical Analysis 
-
-## for trophic group: 
-Tr_Group<- Index3$Tr_Group
-tmp <- Index3[,6:11]
-d <- ddply(tmp,
-           c("Tr_Group"),
-           function(x) rbind(apply(x,2,mean),apply(x,2,sd),apply(x,2,function(y)quantile(y,c(0.05,0.95)))))
-
-d$stat <- c(rep(c("mean","sd","ci95.lower","ci95.upper")))
-
-# - - -
-y <- melt(d,c("Tr_Group","stat"))
-Stock.stat_Tr_Group <-  cast(y, ... ~ variable+stat)
-write.csv(Stock.stat_Tr_Group, file = "Srock.stat_Tr_Group.csv")
-
-## for trophic level:
-Trophic_level<- factor(Index3$Trophic_level)
-tmp <- Index3[,6:11]
-d <- ddply(tmp,
-           c("Trophic_level"),
-           function(x) rbind(apply(x,2,mean),apply(x,2,sd),apply(x,2,function(y)quantile(y,c(0.05,0.95)))))
-
-d$stat <- c(rep(c("mean","sd","ci95.lower","ci95.upper")))
-#d$plot.no <-  sort(rep(1:24,4))
-#to form the table
-y <- melt(d,c("Trophic_level","stat"))
-Stock.stat_TrLev <-  cast(y, ... ~ variable+stat)
-write.csv(Stock.stat_TrLev, file = "Srock.stat_TrLev.csv")
-
-
-## for AG vs BG compartment:
+## for AG vs BG compartment----
       #new data for AG _ BG analysis, where plant stock is separated among root and shoot
-Slopes_ <- read.csv ( "Slopes_Stocks.csv", header=T)
-Index2_ <- read.csv ("separately_root_shoot/stock_groups.csv", header=T)
-names(Index2_)
-## to merge slopes with the groupping information
-Index3_ <- merge(Index2_, Slopes_[,2:8])
-names(Index3_)
+df_ShootRoot <- read_csv("Results/mod_ShootRoot.csv")
+str(df_ShootRoot)
 
-AG_BG<- factor(Index3_$AG_BG)
-tmp <- Index3_[,6:11]
-d <- ddply(tmp,
-           c("AG_BG"),
-           function(x) rbind(apply(x,2,mean),apply(x,2,sd),apply(x,2,function(y)quantile(y,c(0.05,0.95)))))
+group_ShootRoot <- read_csv ("Data/Shoot_Root_separately/EF_grouped_Shoot_Root.csv")
+str(group_ShootRoot)
 
-d$stat <- c(rep(c("mean","sd","ci95.lower","ci95.upper")))
-#d$plot.no <-  sort(rep(1:24,4))
-#to form the table
-y <- melt(d,c("AG_BG","stat"))
-Stock.stat_AG_BG <-  cast(y, ... ~ variable+stat)
-write.csv(Stock.stat_AG_BG, file = "Stock.stat_AG_BG.csv")
+df_AG_BG <- bind_rows(df_main, df_ShootRoot) %>% 
+  left_join(group_ShootRoot, by = join_by(response)) %>% 
+  filter(!response=="Plants.Stock") %>% 
+  select(-Ecos_Function, -r2_part, -R2_model, -p, -estimate, -effect_size, -lambda, -formula) %>% 
+  filter(Dimens=="stock") %>% 
+  pivot_wider(names_from = "predictor", values_from = "effect_size_st")
+
+str(df_AG_BG)
 
 
-Stock.stat_Tr_Group$stock_group <-Stock.stat_Tr_Group$Tr_Group
-Stock.stat_TrLev$stock_group <-Stock.stat_TrLev$Trophic_level
-Stock.stat_AG_BG$stock_group <-Stock.stat_AG_BG$AG_BG
+AG_BG<- factor(df_AG_BG$AG_BG)
+tmp2 <- df_AG_BG[,6:11]
+d_AGBG <- ddply(tmp2, c("AG_BG"),
+              function(x) rbind(apply(x,2,sd),
+                                apply(x,2,function(y)Rmisc::CI(y, ci = 0.95)),
+                                apply(x,2,function(y)quantile(y,c(0.05,0.95)))
+              ))
+d_AGBG
 
-names(Stock.stat_Tr_Group)
-names(Stock.stat_TrLev)
-names(Stock.stat_AG_BG)
+d_AGBG$stat <- c(rep(c("sd","ci_upper","mean","ci_lower","qntl_lower", "qntl_upper")))
 
+y_AGBG <- melt(d_AGBG,c("AG_BG","stat"))
+stat_AG_BG <-  cast(y_AGBG, ... ~ variable+stat)
+
+stat_AG_BG <- stat_AG_BG %>%  
+  dplyr::rename(Group=AG_BG)
+
+names(stat_AG_BG)
+
+#s-----
+stat_TrGroup
+stat_Tr_level
+stat_AG_BG
 
 # Add datasets vertically
-my.data <- rbind(Stock.stat_Tr_Group[,2:26], Stock.stat_TrLev[,2:26], Stock.stat_AG_BG[,2:26])
+my.data <- rbind(stat_TrGroup, stat_Tr_level, stat_AG_BG)
 
+my.data <- my.data %>% 
+  mutate(Group = fct_relevel(Group, 
+                           "BG", "AG",
+                           "1", "2","3",
+                           "Plants", "Detritus", 
+                           "Herbivores", "Decomposers",
+                           "Omnivores", "Carnivores"))
 
-#names(my.data)
-#my.data[6,2:25]=NA
+my.data
+
 
 library(ggplot2)
 
@@ -169,18 +150,13 @@ color_y <- c("black","black",
              "#32CD32", "#8B4513",   "#008B8B", "#D2691E", "#EE82EE", "#C71585")
 
 
-color1 <- c("red","royalblue","royalblue","royalblue","royalblue","royalblue",
+color1 <- c("royalblue","royalblue","royalblue","royalblue","royalblue","royalblue",
             "royalblue","royalblue", "royalblue",
             "royalblue","royalblue")
-
+            
 plot1 <- my.data %>%
-  mutate(stock_group = fct_relevel(stock_group, 
-                                   "BG", "AG",
-                                   "1", "2","3",
-                                     "Plants", "Detritus", 
-                                     "Herbivores", "Decomposers",
-                                     "Omnivores", "Carnivores")) %>% # to arrange the order in "stock_group" on the plot:
-  ggplot( aes(x = stock_group, y = sowndiv_mean, ymin = sowndiv_ci95.lower, ymax = sowndiv_ci95.upper)) +
+  ggplot( aes(x = Group, y = sowndiv_mean, ymin = sowndiv_qntl_lower, ymax = sowndiv_qntl_upper)) +
+# ggplot( aes(x = Group, y = sowndiv_mean, ymin = sowndiv_mean-sowndiv_sd, ymax = sowndiv_mean+sowndiv_sd)) +
   geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color1) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color1) +
@@ -191,11 +167,16 @@ plot1 <- my.data %>%
   theme(plot.margin = unit(c(1,0.35,1,1.1), "lines"),
         panel.border = element_rect(fill = NA, colour = "grey30", size=0.8))+
   theme(axis.text.x=element_text(size=9,colour = "black"),
-        axis.text.y=element_text(size=10,colour = color_y),
+        axis.text.y=element_text(size=10,colour = "black"),
         axis.title.x=element_text(size=10),
         axis.title.y=element_text(size=10))+
   ylab("SR effects")+
-    xlab("")
+    xlab("")+
+  ylim(-0.5,0.5)
+
+plot1
+
+
 # labs(x=expression(bold("Standing stock, g m "^-2)))
 #plot1
 

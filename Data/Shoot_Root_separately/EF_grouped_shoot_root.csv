@@ -52,5 +52,5 @@ BG.Decomposers.Stock,stock,BG,NA,Decomposers,2
 Soil.Microorganisms.Stock,stock,BG,NA,Decomposers,2
 AG.Litter.Stock,stock,AG,NA,Detritus,1
 SOM.Stock,stock,BG,NA,Detritus,1
-root.StandBiom,stock,BG,NA,Plants,1
-shoot.StandBiom,stock,AG,NA,Plants,1
+root_StandBiom,stock,BG,NA,Plants,1
+shoot_StandBiom,stock,AG,NA,Plants,1
