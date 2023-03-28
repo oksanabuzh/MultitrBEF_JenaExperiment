@@ -1,4 +1,4 @@
-# DO the plant diversity effects on stocks depend on  trophic contexts?
+# Do the plant diversity effects on stocks depend on  trophic contexts?
 
 # Comparison of slopes of the effect of plant diversity biomass stocks (n=12) between 
 #         - trophic groups ("Plants", "Detritus", "Herbivores", "Decomposers","Omnivores", "Carnivores"), 

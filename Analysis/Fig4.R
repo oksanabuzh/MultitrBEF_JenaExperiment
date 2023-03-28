@@ -1,23 +1,94 @@
-# Plots for the stock analyses
+# Plots for the stocks
 # by trophic groups, trophic levels and AG vs BG.
-# Buzhdygan
-# 2022.04.17
-# ----------------------------------------------------
+
 rm(list=ls(all=TRUE))
-setwd("C:/Users/Oksana/Nextcloud/Jena2/JenFlow (Sebastian Meyer)/JenFlow2/Effects_slopes/Stocks")
 
-Slopes1 <- read.csv ( "Slopes_Stocks.csv", header=T)
-Slopes <- Slopes1 [,2:8]
-Index2 <- read.csv ("stock_groups.csv", header=T)
-names(Index2)
-
-## to merge slopes with the groupping information
-Index3 <- merge(Index2, Slopes)
-names(Index3)
+# Packages
+library(tidyverse)
+library(rcompanion)
 
 library(plyr)
 library(reshape)
 library(forcats)
+
+# Data main
+df_main <- read_csv("Results/mod_main_text.csv")
+str(df_main)
+
+group <- read_csv ("Data/EF_grouped.csv")
+names(group)
+
+df_all <- df_main %>% 
+  left_join(group, by = join_by(response)) %>% 
+  select(-Ecos_Function, -r2_part, -R2_model, -p, -estimate, -effect_size, -lambda, -formula) %>% 
+  filter(Dimens=="stock") %>% 
+  mutate(Tr_level=as_factor(Trophic_level)) %>% 
+  mutate(Tr_Group=fct_relevel(Tr_Group,c("Plants","Detritus","Herbivores","Decomposers","Omnivores","Carnivores"))) %>% 
+  pivot_wider(names_from = "predictor", values_from = "effect_size_st")
+
+str(df_all)
+# Get descriptive statistics----
+## for trophic group----
+
+Tr_Group<- df_all$Tr_Group
+tmp <- df_all[,7:12]
+
+d <- ddply(tmp, c("Tr_Group"),
+                      function(x) rbind(apply(x,2,mean),
+                                        apply(x,2,sd),
+                                        apply(x,2,function(y)as.vector(t.test(y, conf.level = 0.95)$conf.int))
+                                        ))
+
+# line 39 does not work
+
+d$stat <- c(rep(c("mean","sd","ci95.lower","ci95.upper")))
+
+y <- melt(d,c("Tr_Group","stat"))
+Stock.stat_Tr_Group <-  cast(y, ... ~ variable+stat)
+
+# alternative:
+
+Tr_Gr <- df_all %>% 
+  group_by(Tr_Group) %>% 
+  summarize_at(vars(sowndiv, numfg, leg.ef, gr.ef, sh.ef, th.ef), 
+               list(mean = mean, 
+                    sd = sd, 
+                    CI_5 = as.vector(t.test(conf.level = 0.95)$conf.int)[1],
+                    CI_25= as.vector(t.test(conf.level = 0.95)$conf.int)[2]))
+# lines 56 and 57 do not work
+ 
+
+
+Tr_Gr <- df_all %>% 
+  group_by(Tr_Group) %>% 
+  summarize(CI_5 = (t.test(sowndiv, conf.level = 0.95)$conf.int)[1],
+            CI_25= (t.test(sowndiv, conf.level = 0.95)$conf.int)[2])
+
+Tr_Gr
+# does not give results for the separate groups
+
+
+
+# End
+
+#####################################
+
+Tr_Gr <- df_all %>% 
+  group_by(Tr_Group) %>% 
+  summarize_at(vars(sowndiv, numfg, leg.ef, gr.ef, sh.ef, th.ef), 
+               list(mean = mean, sd = sd))
+                    
+Tr_Gr
+
+str(Tr_Gr)
+
+as.vector(t.test(df_all$sowndiv, conf.level = 0.95)$conf.int)[2]
+
+test2 <- t.test(df_all$sowndiv, conf.level = 0.95)
+test2$conf.int
+
+
+
 
 # --- Descriptive Statistical Analysis 
 
