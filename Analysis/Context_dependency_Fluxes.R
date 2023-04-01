@@ -1,6 +1,6 @@
 # Do the plant diversity effects on fluxes depend on  trophic contexts?
 
-# Comparison of slopes of the effect of plant diversity on energy fluxes (n=41) between 
+# Comparison of the effect of plant diversity on energy fluxes (n=41) between 
 #         - ecosystem functions (Plant respiration, Herbivory, Decomposition, Predation, Detritus production, and Respiration), 
 #         - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground).
 
@@ -91,9 +91,21 @@ anova(m1_SR)
 
 emmeans::emmeans(m1_SR, list(pairwise ~ Ecos_Function))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m1_SR, list(pairwise ~ Ecos_Function)),  
-    type="response",
-    Letters = letters, adjust = "none")
+model_means_EF <- multcomp::cld(emmeans::emmeans(m1_SR, list(pairwise ~ Ecos_Function)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_EF
+
+
+
+ggplot(data = model_means_EF) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Ecos_Function, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
+
+
 
 ## AG_BG ----
 sowndiv_AG_BG$AG_BG
@@ -119,9 +131,19 @@ anova(m3_SR)
 
 emmeans::emmeans(m3_SR, list(pairwise ~ AG_BG))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m3_SR, list(pairwise ~ AG_BG)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_AG_BG <- multcomp::cld(emmeans::emmeans(m3_SR, list(pairwise ~ AG_BG)),  
+                                   Letters = letters, adjust = "Tukey")
+model_means_AG_BG
+
+
+
+ggplot(data = model_means_AG_BG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = AG_BG), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = AG_BG),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 #2. numfg ----
@@ -153,9 +175,19 @@ anova(m1_FG)
 
 emmeans::emmeans(m1_FG, list(pairwise ~ Ecos_Function))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m1_FG, list(pairwise ~ Ecos_Function)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_EF <- multcomp::cld(emmeans::emmeans(m1_FG, list(pairwise ~ Ecos_Function)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_EF
+
+
+
+ggplot(data = model_means_EF) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Ecos_Function, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 ## AG_BG ----
 numfg_AG_BG$AG_BG
@@ -173,10 +205,19 @@ anova(m3_FG)
 
 emmeans::emmeans(m3_FG, list(pairwise ~ AG_BG))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m3_FG, list(pairwise ~ AG_BG)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_AG_BG <- multcomp::cld(emmeans::emmeans(m3_FG, list(pairwise ~ AG_BG)),  
+                                   Letters = letters, adjust = "Tukey")
+model_means_AG_BG
 
+
+
+ggplot(data = model_means_AG_BG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = AG_BG), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = AG_BG),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 #3. leg.ef ----
 
@@ -205,11 +246,26 @@ anova(m1_leg)
 
 # Marginal means and pairwise differences 
 
-emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function))
+m_means <- emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_EF <- multcomp::cld(emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_EF
+
+plot(m_means, comparisons = TRUE)
+# lower.CL and upper.CL in  emmeans are are not the confidence intervals for the means 
+# they are the confidence intervals for the pairwise differences of means
+# https://stackoverflow.com/questions/61779348/how-does-emmeans-calculate-confidence-intervals-used-to-compare-means
+
+
+
+ggplot(data = model_means_EF) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Ecos_Function, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 ## AG_BG ----
@@ -234,10 +290,19 @@ anova(m3_leg)
 
 emmeans::emmeans(m3_leg, list(pairwise ~ AG_BG))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m3_leg, list(pairwise ~ AG_BG)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_AG_BG <- multcomp::cld(emmeans::emmeans(m3_leg, list(pairwise ~ AG_BG)),  
+                                   Letters = letters, adjust = "Tukey")
+model_means_AG_BG
 
+
+
+ggplot(data = model_means_AG_BG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = AG_BG), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = AG_BG),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 #4. gr.ef ----
@@ -299,9 +364,19 @@ anova(m1_gr)
 
 emmeans::emmeans(m1_gr, list(pairwise ~ Ecos_Function))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m1_gr, list(pairwise ~ Ecos_Function)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_EF <- multcomp::cld(emmeans::emmeans(m1_gr, list(pairwise ~ Ecos_Function)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_EF
+
+
+
+ggplot(data = model_means_EF) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Ecos_Function, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 ## AG_BG ----
@@ -320,10 +395,19 @@ anova(m3_gr)
 
 emmeans::emmeans(m3_gr, list(pairwise ~ AG_BG))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m3_gr, list(pairwise ~ AG_BG)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_AG_BG <- multcomp::cld(emmeans::emmeans(m3_gr, list(pairwise ~ AG_BG)),  
+                                   Letters = letters, adjust = "Tukey")
+model_means_AG_BG
 
+
+
+ggplot(data = model_means_AG_BG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = AG_BG), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = AG_BG),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 
@@ -363,9 +447,19 @@ anova(m1_SH)
 
 emmeans::emmeans(m1_SH, list(pairwise ~ Ecos_Function))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m1_SH, list(pairwise ~ Ecos_Function)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_EF <- multcomp::cld(emmeans::emmeans(m1_SH, list(pairwise ~ Ecos_Function)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_EF
+
+
+
+ggplot(data = model_means_EF) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Ecos_Function, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 ## AG_BG ----
 sh_AG_BG$AG_BG
@@ -391,10 +485,19 @@ anova(m3_SH)
 
 emmeans::emmeans(m3_SH, list(pairwise ~ AG_BG))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m3_SH, list(pairwise ~ AG_BG)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_AG_BG <- multcomp::cld(emmeans::emmeans(m3_SH, list(pairwise ~ AG_BG)),  
+                                   Letters = letters, adjust = "Tukey")
+model_means_AG_BG
 
+
+
+ggplot(data = model_means_AG_BG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = AG_BG), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = AG_BG),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 #6. th.ef ----
@@ -426,9 +529,19 @@ anova(m1_TH)
 
 emmeans::emmeans(m1_TH, list(pairwise ~ Ecos_Function))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m1_TH, list(pairwise ~ Ecos_Function)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_EF <- multcomp::cld(emmeans::emmeans(m1_TH, list(pairwise ~ Ecos_Function)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_EF
+
+
+
+ggplot(data = model_means_EF) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Ecos_Function, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
 
 ## AG_BG ----
@@ -447,6 +560,16 @@ anova(m3_TH)
 
 emmeans::emmeans(m3_TH, list(pairwise ~ AG_BG))
 # to add letters for post-hoc test:
-multcomp::cld(emmeans::emmeans(m3_TH, list(pairwise ~ AG_BG)),  
-              type="response",
-              Letters = letters, adjust = "none")
+model_means_AG_BG <- multcomp::cld(emmeans::emmeans(m3_TH, list(pairwise ~ AG_BG)),  
+                                   Letters = letters, adjust = "Tukey")
+model_means_AG_BG
+
+
+
+ggplot(data = model_means_AG_BG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = AG_BG), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = AG_BG),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
