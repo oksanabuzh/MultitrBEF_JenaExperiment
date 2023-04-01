@@ -27,7 +27,7 @@ names(Index)
 # Models are calculated with the following form:
 # y ~ block + variable_of_interest + all_other_variables
 # for Main text: type I sum of squares are used
-# for Supplementare: type II sum of squares are used
+# for Supplementary: type II sum of squares are used
 
 # create a table with all models to be calculated
 all_models <- expand.grid(
