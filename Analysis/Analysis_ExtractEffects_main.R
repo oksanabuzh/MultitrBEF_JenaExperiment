@@ -4,7 +4,7 @@
 # oksana.buzh@fu-berlin.de
 
 # Tests for the effects of each diversity facet on each stock and flow across the food web
-# Main analysis (in the main text) and supplementary analeses
+# Main analysis (in the main text) and supplementary analyses
 
 library(tidyverse)
 library(glue)
@@ -67,7 +67,7 @@ mod_supp <- purrr::pmap_df(all_models, ~run_model_all_vars(
 str(mod_supp)
 summary(mod_supp)
 
-write_csv(mod_supp, "Data/mod_supp.csv")
+write_csv(mod_supp, "Results/mod_supp.csv")
 
 # Check results -----------------------------------------------------------
 
