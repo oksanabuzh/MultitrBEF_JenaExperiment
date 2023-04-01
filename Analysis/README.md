@@ -1,5 +1,5 @@
 # Analysis
-Provide tests for the effects of each diversity facet on each stock and flow across the food web diversity facets: "sowndiv" - species richness, "numfg" - number of functional groups, "leg.ef" - presence of legumes, "gr.ef" - presence of grasses, "sh.ef" - presence of short herbs, "th.ef"- presence of tall herbs.
+Contains codes for testing the effects of each diversity facet on each stock and flow across the food web diversity facets: "sowndiv" - species richness, "numfg" - number of functional groups, "leg.ef" - presence of legumes, "gr.ef" - presence of grasses, "sh.ef" - presence of short herbs, "th.ef"- presence of tall herbs.
 
 # Files:
 
@@ -13,3 +13,12 @@ In the supplementary the p-value is calculated from type II sum of squares (usin
 
 "Analysis_ExtractEffects_Shoot_Root" - considers standing biomass stocks of root and shoot separately, while in the "Analysis_ExtractEffects" plant standing biomass stock is considered as one variable (as sum of stocks of root and shoot).
 
+"check_results" file includes few selected models fitted manually, and compared their results with the results derived by the function "run_model_all_variables".
+
+"Context_depandancy_Slopes" - tests # Do the plant diversity effects on stocks depend on  trophic contexts?
+
+# Comparison of slopes of the effect of plant diversity biomass stocks (n=12) between 
+#         - trophic groups ("Plants", "Detritus", "Herbivores", "Decomposers","Omnivores", "Carnivores"), 
+#         - trophic levels (1st, 2nd, 3rd), and between 
+#         - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground). 
+# An analysis of variance with sequential sum of squares was applied.

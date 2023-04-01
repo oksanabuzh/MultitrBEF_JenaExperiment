@@ -50,7 +50,7 @@ mod <- purrr::pmap_df(all_models, ~run_model_all_vars(
 str(mod)
 summary(mod)
 
-write_csv(mod, "Data/mod_main_text.csv")
+write_csv(mod, "Results/mod_main_text.csv")
 
 # Analysis supplementary --------------------------------------------------
 # Run the `run_model_all_vars` function for each line of `all_models`
