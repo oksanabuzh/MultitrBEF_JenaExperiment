@@ -118,7 +118,7 @@ par(mfrow = c(1, 1))
 
 min(sowndiv$effect_size_st)
 
-m3_SR<-lm(log(effect_size_st+0.2) ~  AG_BG, data=sowndiv_AG_BG)
+m3_SR<-lm(log(effect_size_st+0.2) ~   AG_BG, data=sowndiv_AG_BG)
 
 par(mfrow = c(2, 2))
 plot(m3_SR)
@@ -126,6 +126,26 @@ par(mfrow = c(1, 1))
 
 summary(m3_SR)
 anova(m3_SR)
+
+
+
+
+anova(m1_SR)
+a<-rbind(anova(m1_SR)[1,],anova(m3_SR)[1,])
+a
+
+
+
+m3_SR<-lm(effect_size_st ~  Ecos_Function + AG_BG, data=sowndiv_AG_BG)
+
+par(mfrow = c(2, 2))
+plot(m3_SR)
+par(mfrow = c(1, 1))
+
+summary(m3_SR)
+anova(m3_SR)
+
+
 
 # Marginal means and pairwise differences 
 

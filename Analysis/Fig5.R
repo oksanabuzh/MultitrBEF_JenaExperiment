@@ -144,10 +144,7 @@ my.data
 library(ggplot2)
 
 
-# Plot of effects (slopes) - Diversity vs. Ecosystem Functions ---------- Fig. 1.
-color_y <- c("black","black", 
-             "black", "black","black",
-             "#32CD32", "#8B4513",   "#008B8B", "#D2691E", "#EE82EE", "#C71585")
+# Plot of effects (slopes) - Diversity vs. Ecosystem Functions ---------- Fig. 5.
 
 
 color1 <- c("royalblue","royalblue","royalblue","royalblue","royalblue","red",
@@ -156,7 +153,7 @@ color1 <- c("royalblue","royalblue","royalblue","royalblue","royalblue","red",
             
 plot1 <- my.data %>%
 #  ggplot( aes(x = Group, y = sowndiv_mean, ymin = sowndiv_qntl_lower, ymax = sowndiv_qntl_upper)) +
- ggplot( aes(x = Group, y = sowndiv_mean, ymin = sowndiv_mean-sowndiv_sd, ymax = sowndiv_mean+sowndiv_sd)) +
+ ggplot( aes(x = Group, y = sowndiv_mean, ymin = sowndiv_ci_lower, ymax = sowndiv_ci_upper)) +
   geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color1) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color1) +
@@ -189,7 +186,7 @@ color2 <- c("royalblue","royalblue","red","royalblue","royalblue","royalblue",
             "royalblue","royalblue")
 
 plot2 <- my.data %>%
-  ggplot( aes(x = Group, y = numfg_mean, ymin = numfg_mean-sowndiv_sd, ymax = numfg_mean+sowndiv_sd)) +
+  ggplot( aes(x = Group, y = numfg_mean, ymin = numfg_ci_lower, ymax = numfg_ci_upper)) +
   geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color2) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color2) +
@@ -214,7 +211,7 @@ color3 <- c("red","royalblue","red","royalblue","royalblue","royalblue",
             "royalblue","red")
                  
 plot3 <- my.data %>%
-  ggplot( aes(x = Group, y = leg.ef_mean, ymin = leg.ef_mean-sowndiv_sd, ymax = leg.ef_mean+sowndiv_sd)) +
+  ggplot( aes(x = Group, y = leg.ef_mean, ymin = leg.ef_ci_lower, ymax = leg.ef_ci_upper)) +
   geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color3) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color3) +
@@ -238,7 +235,7 @@ color4 <- c("royalblue","red","red","red","royalblue","royalblue",
             "red","royalblue")
 
 plot4 <- my.data %>%
-  ggplot( aes(x = Group, y = gr.ef_mean, ymin = gr.ef_mean-sowndiv_sd, ymax = gr.ef_mean+sowndiv_sd)) +
+  ggplot( aes(x = Group, y = gr.ef_mean, ymin = gr.ef_ci_lower, ymax = gr.ef_ci_upper)) +
   geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color4) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color4) +
@@ -263,7 +260,7 @@ color5 <- c("royalblue","royalblue","royalblue","royalblue","red","red",
             "royalblue","royalblue")
 
 plot5 <- my.data %>%
-  ggplot( aes(x = Group, y = sh.ef_mean, ymin = sh.ef_mean-sowndiv_sd, ymax = sh.ef_mean+sowndiv_sd)) +
+  ggplot( aes(x = Group, y = sh.ef_mean, ymin = sh.ef_ci_lower, ymax = sh.ef_ci_upper)) +
     geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color5) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color5) +
@@ -288,7 +285,7 @@ color6 <- c("royalblue","royalblue","red","red","red","red",
             "red","red")
 
 plot6 <- my.data %>%
-  ggplot( aes(x = Group, y = th.ef_mean, ymin = th.ef_mean-sowndiv_sd, ymax = th.ef_mean+sowndiv_sd)) +
+  ggplot( aes(x = Group, y = th.ef_mean, ymin = th.ef_ci_lower, ymax = th.ef_ci_upper)) +
   geom_hline(yintercept = 0, colour="grey30", linetype="dotted", size=0.1)+
   geom_point( position = position_nudge(0), size=1.5,colour = color6) +
   geom_errorbar(position = position_nudge(0), width = 0, size=0.3,colour = color6) +
