@@ -140,10 +140,29 @@ my.data <- my.data %>%
 
 my.data
 
+library(readr)
+write_csv(my.data, "Results/stats_for_Fig5.csv")
+
+
+k<-my.data %>% 
+  filter(!Group=="Plants") %>% 
+  summarise(min1 = min(sowndiv_ci_lower), max1 = max(sowndiv_ci_lower),
+            min2 = min(numfg_ci_lower), max2 = max(numfg_ci_lower),
+            min3 = min(leg.ef_ci_lower), max3 = max(leg.ef_ci_lower),
+            min4 = min(gr.ef_ci_lower), max4 = max(gr.ef_ci_lower),
+            min5 = min(sh.ef_ci_lower), max5 = max(sh.ef_ci_lower),
+            min6 = min(th.ef_ci_lower), max6 = max(th.ef_ci_lower),
+            min7 = min(sowndiv_ci_upper), max7 = max(sowndiv_ci_upper),
+            min8 = min(numfg_ci_upper), max8 = max(numfg_ci_upper),
+            min9 = min(leg.ef_ci_upper), max9 = max(leg.ef_ci_upper),
+            min10 = min(gr.ef_ci_upper), max10 = max(gr.ef_ci_upper),
+            min11 = min(sh.ef_ci_upper), max11 = max(sh.ef_ci_upper),
+            min12 = min(th.ef_ci_upper), max12 = max(th.ef_ci_upper)) %>% 
+  pivot_longer(cols = starts_with("m"),, names_to = "names", values_to = "count") %>% 
+  summarise(min = min(count), max = max(count))
+k
 
 library(ggplot2)
-
-
 # Plot of effects (slopes) - Diversity vs. Ecosystem Functions ---------- Fig. 5.
 
 
@@ -169,7 +188,7 @@ plot1 <- my.data %>%
         axis.title.y=element_text(size=10))+
   ylab("SR effects")+
     xlab("")+
-  ylim(-0.5,0.5)
+  ylim(-2.3,2.3)
 
 plot1
 
@@ -202,7 +221,7 @@ plot2 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("FG number effects")+
   xlab("")+
-  ylim(-0.5,0.5)
+  ylim(-2.3,2.3)
 plot2
 
 
@@ -227,7 +246,7 @@ plot3 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("Legume effects")+
   xlab("")+
-  ylim(-0.5,0.5)
+  ylim(-2.3,2.3)
 plot3
 
 color4 <- c("royalblue","red","red","red","royalblue","royalblue",
@@ -251,7 +270,7 @@ plot4 <- my.data %>%
         axis.title.y=element_text(size=10))+
   ylab("Grass effects")+
 xlab("")+
-  ylim(-0.5,0.5)
+  ylim(-2.3,2.3)
   
 plot4
 
@@ -277,7 +296,7 @@ plot5 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("Small herb effects")+
   xlab("")+
-  ylim(-0.5,0.5)
+  ylim(-2.3,2.3)
 plot5
 
 color6 <- c("royalblue","royalblue","red","red","red","red",
@@ -302,7 +321,7 @@ plot6 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("Tall herb effects")+
   xlab("")+
-  ylim(-0.5,0.5)
+  ylim(-2.3,2.3)
 
 plot6
 
@@ -375,5 +394,5 @@ grid.lines(x = unit(c(0.07, 0.985), "npc"),
 dev.off()
 read_docx() %>% 
   body_add_img(src = filename, width = 6, height = 7)%>% 
-  print(target = "Results/fig5.docx")
+  print(target = "Results/Fig_5.docx")
 

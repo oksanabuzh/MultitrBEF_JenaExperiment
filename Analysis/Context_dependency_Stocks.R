@@ -89,7 +89,7 @@ emmeans::emmeans(m1_SR, list(pairwise ~ Tr_Group))
 # to add letters for post-hoc test:
 model_means_TG <- multcomp::cld(emmeans::emmeans(m1_SR, list(pairwise ~ Tr_Group)),  
     Letters = letters, adjust = "Tukey")
-
+model_means_TG
 
 library(tidyverse) 
 library(scales)    
@@ -118,7 +118,7 @@ emmeans::emmeans(m2_SR, list(pairwise ~ Tr_level))
 # to add letters for post-hoc test:
 model_means_TL <- multcomp::cld(emmeans::emmeans(m2_SR, list(pairwise ~ Tr_level)),  
                                  Letters = letters, adjust = "Tukey")
-
+model_means_TL
 
 library(tidyverse) 
 library(scales)    
@@ -736,3 +736,28 @@ ggplot(data = model_means_AG_BG) +
                  width = 0.05, color = "black") +
   geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
             position = position_nudge(x = 0.1), hjust = 0,color = "black") 
+
+
+
+
+
+
+results <-rbind(anova(m1_SR)[1,],anova(m3_SR)[1,], 
+                anova(m1_FG)[1,], anova(m3_FG)[1,],
+                anova(m1_leg)[1,],anova(m3_leg)[1,],
+                anova(m1_gr)[1,],anova(m3_gr)[1,],
+                anova(m1_SH)[1,],anova(m3_SH)[1,],
+                anova(m1_TH)[1,],anova(m3_TH)[1,]) 
+
+
+row.names(results)= c("Ecosystem function for SR", "AG_BG for SR", 
+                      "Ecosystem function for FG", "AG_BG for FG",
+                      "Ecosystem function for leg", "AG_BG for leg",
+                      "Ecosystem function for grass", "AG_BG for grass",
+                      "Ecosystem function for SH", "AG_BG for SH",
+                      "Ecosystem function for TH", "AG_BG for TH")
+
+results
+
+
+write_csv(results, "Results/Tables_3_4_5.csv")

@@ -78,7 +78,7 @@ sowndiv$effect_size_st
 sowndiv$effect_s_tr
 
 
-m1_SR<-lm(effect_s_tr ~  Ecos_Function, data=sowndiv)
+m1_SR<-lm(effect_s_tr ~  Ecos_Function , data=sowndiv)
 
 par(mfrow = c(2, 2))
 plot(m1_SR)
@@ -97,7 +97,7 @@ model_means_EF
 
 
 
-ggplot(data = model_means_EF) +
+ ggplot(data = model_means_EF) +
   theme_bw()+
   geom_point(aes(y = emmean, x = Ecos_Function), size = 2, color = "black") +
   geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Ecos_Function),
@@ -118,7 +118,7 @@ par(mfrow = c(1, 1))
 
 min(sowndiv$effect_size_st)
 
-m3_SR<-lm(log(effect_size_st+0.2) ~   AG_BG, data=sowndiv_AG_BG)
+m3_SR<-lm((effect_size_st) ~  AG_BG, data=sowndiv_AG_BG)
 
 par(mfrow = c(2, 2))
 plot(m3_SR)
@@ -126,25 +126,6 @@ par(mfrow = c(1, 1))
 
 summary(m3_SR)
 anova(m3_SR)
-
-
-
-
-anova(m1_SR)
-a<-rbind(anova(m1_SR)[1,],anova(m3_SR)[1,])
-a
-
-
-
-m3_SR<-lm(effect_size_st ~  Ecos_Function + AG_BG, data=sowndiv_AG_BG)
-
-par(mfrow = c(2, 2))
-plot(m3_SR)
-par(mfrow = c(1, 1))
-
-summary(m3_SR)
-anova(m3_SR)
-
 
 
 # Marginal means and pairwise differences 
@@ -164,6 +145,8 @@ ggplot(data = model_means_AG_BG) +
                  width = 0.05, color = "black") +
   geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
             position = position_nudge(x = 0.1), hjust = 0,color = "black") 
+
+
 
 
 #2. numfg ----
@@ -190,6 +173,7 @@ par(mfrow = c(1, 1))
 
 summary(m1_FG)
 anova(m1_FG)
+
 
 # Marginal means and pairwise differences 
 
@@ -239,6 +223,7 @@ ggplot(data = model_means_AG_BG) +
   geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
             position = position_nudge(x = 0.1), hjust = 0,color = "black") 
 
+
 #3. leg.ef ----
 
 # Data
@@ -264,9 +249,10 @@ par(mfrow = c(1, 1))
 summary(m1_leg)
 anova(m1_leg)
 
+
 # Marginal means and pairwise differences 
 
-m_means <- emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function))
+m_means <- emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function),   adjust = "none")
 # to add letters for post-hoc test:
 model_means_EF <- multcomp::cld(emmeans::emmeans(m1_leg, list(pairwise ~ Ecos_Function)),  
                                 Letters = letters, adjust = "Tukey")
@@ -305,6 +291,7 @@ par(mfrow = c(1, 1))
 
 summary(m3_leg)
 anova(m3_leg)
+
 
 # Marginal means and pairwise differences 
 
@@ -380,6 +367,7 @@ par(mfrow = c(1, 1))
 summary(m1_gr)
 anova(m1_gr)
 
+
 # Marginal means and pairwise differences 
 
 emmeans::emmeans(m1_gr, list(pairwise ~ Ecos_Function))
@@ -410,6 +398,7 @@ par(mfrow = c(1, 1))
 
 summary(m3_gr)
 anova(m3_gr)
+
 
 # Marginal means and pairwise differences 
 
@@ -463,6 +452,7 @@ par(mfrow = c(1, 1))
 summary(m1_SH)
 anova(m1_SH)
 
+
 # Marginal means and pairwise differences 
 
 emmeans::emmeans(m1_SH, list(pairwise ~ Ecos_Function))
@@ -500,6 +490,7 @@ par(mfrow = c(1, 1))
 
 summary(m3_SH)
 anova(m3_SH)
+
 
 # Marginal means and pairwise differences 
 
@@ -545,6 +536,7 @@ par(mfrow = c(1, 1))
 summary(m1_TH)
 anova(m1_TH)
 
+
 # Marginal means and pairwise differences 
 
 emmeans::emmeans(m1_TH, list(pairwise ~ Ecos_Function))
@@ -576,6 +568,7 @@ par(mfrow = c(1, 1))
 summary(m3_TH)
 anova(m3_TH)
 
+
 # Marginal means and pairwise differences 
 
 emmeans::emmeans(m3_TH, list(pairwise ~ AG_BG))
@@ -593,3 +586,28 @@ ggplot(data = model_means_AG_BG) +
                  width = 0.05, color = "black") +
   geom_text(aes(y = emmean, x = AG_BG, label = str_trim(.group)),
             position = position_nudge(x = 0.1), hjust = 0,color = "black") 
+
+
+
+
+
+
+results <-rbind(anova(m1_SR)[1,],anova(m3_SR)[1,], 
+         anova(m1_FG)[1,], anova(m3_FG)[1,],
+         anova(m1_leg)[1,],anova(m3_leg)[1,],
+         anova(m1_gr)[1,],anova(m3_gr)[1,],
+         anova(m1_SH)[1,],anova(m3_SH)[1,],
+         anova(m1_TH)[1,],anova(m3_TH)[1,]) 
+
+
+row.names(results)= c("Ecosystem function for SR", "AG_BG for SR", 
+                "Ecosystem function for FG", "AG_BG for FG",
+                "Ecosystem function for leg", "AG_BG for leg",
+                "Ecosystem function for grass", "AG_BG for grass",
+                "Ecosystem function for SH", "AG_BG for SH",
+                "Ecosystem function for TH", "AG_BG for TH")
+
+results
+
+
+write.csv(results, "Results/Tables_1_2.csv", row.names=TRUE)

@@ -35,3 +35,10 @@ An analysis of variance with sequential sum of squares was applied (using anova(
 
 
 "Fig.5" - code for creating plots for the biodiversity effects on stocks grouped by trophic groups, trophic levels and AG vs BG.
+
+
+# NOT USED CODE (to remove)
+
+"Context_dependency_Fluxes_vs_Stocks" - tests whether the plant diversity effects differ berween dimensions of ecosystem functions: fluxes vs stocks
+
+

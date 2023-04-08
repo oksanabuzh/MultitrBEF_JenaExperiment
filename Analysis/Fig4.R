@@ -2,7 +2,8 @@
 # grouped by ecosystem functions, and AG vs BG
 
 rm(list=ls(all=TRUE))
-dev.off()
+ dev.off()
+
 # Packages
 library(tidyverse)
 library(rcompanion)
@@ -116,10 +117,31 @@ my.data <- my.data %>%
 
 my.data
 library(tidyverse)
-write_csv(my.data, "Results/FluxesGrouped_means_ci.csv")
+write_csv(my.data, "Results/stats_for_Fig4.csv")
+
+
+my.data %>% 
+  summarise(max=min(sowndiv_ci_lower))
+
+k<-my.data %>% 
+  filter(!Group=="Carbon uptake") %>% 
+summarise(min1 = min(sowndiv_ci_lower), max1 = max(sowndiv_ci_lower),
+          min2 = min(numfg_ci_lower), max2 = max(numfg_ci_lower),
+          min3 = min(leg.ef_ci_lower), max3 = max(leg.ef_ci_lower),
+          min4 = min(gr.ef_ci_lower), max4 = max(gr.ef_ci_lower),
+          min5 = min(sh.ef_ci_lower), max5 = max(sh.ef_ci_lower),
+          min6 = min(th.ef_ci_lower), max6 = max(th.ef_ci_lower),
+          min7 = min(sowndiv_ci_upper), max7 = max(sowndiv_ci_upper),
+          min8 = min(numfg_ci_upper), max8 = max(numfg_ci_upper),
+          min9 = min(leg.ef_ci_upper), max9 = max(leg.ef_ci_upper),
+          min10 = min(gr.ef_ci_upper), max10 = max(gr.ef_ci_upper),
+          min11 = min(sh.ef_ci_upper), max11 = max(sh.ef_ci_upper),
+          min12 = min(th.ef_ci_upper), max12 = max(th.ef_ci_upper)) %>% 
+  pivot_longer(cols = starts_with("m"),, names_to = "names", values_to = "count") %>% 
+  summarise(min = min(count), max = max(count))
+k
 
 library(ggplot2)
-
 
 # Plot of effects (slopes) - Diversity vs. Ecosystem Functions ---------- Fig. 4.
 
@@ -146,7 +168,7 @@ plot1 <- my.data %>%
         axis.title.y=element_text(size=10))+
   ylab("SR effects")+
   xlab("") +
-  ylim(-0.23,0.44)
+  ylim(-0.44,0.44)
 
 plot1
 
@@ -174,7 +196,7 @@ plot2 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("FG number effects")+
   xlab("")+
-  ylim(-0.23,0.44)
+  ylim(-0.44,0.44)
 plot2
 
 
@@ -200,7 +222,7 @@ plot3 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("Legume effects")+
   xlab("")+
-  ylim(-0.23,0.44)
+  ylim(-0.44,0.44)
 plot3
 
 
@@ -225,7 +247,7 @@ plot4 <- my.data %>%
         axis.title.y=element_text(size=10))+
   ylab("Grass effects")+
   xlab("")+
-  ylim(-0.23,0.44)
+  ylim(-0.44,0.44)
 
 plot4
 
@@ -251,7 +273,7 @@ plot5 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("Small herb effects")+
   xlab("")+
-  ylim(-0.23,0.44)
+  ylim(-0.44,0.44)
 plot5
 
 
@@ -276,7 +298,7 @@ plot6 <- my.data %>%
         axis.title=element_text(size=10))+
   ylab("Tall herb effects")+
   xlab("")+
-  ylim(-0.23,0.44)
+  ylim(-0.44,0.44)
 
 plot6
 
@@ -294,27 +316,27 @@ grid.arrange(plot1, plot2, plot3, plot4,  plot5, plot6, nrow = 2, widths=c(.57,.
 
 
 grid.text((paste("a")),
-          x = unit(0.29, "npc"), y = unit(0.992, "npc"), just = c("left", "top"), 
+          x = unit(0.27, "npc"), y = unit(0.992, "npc"), just = c("left", "top"), 
           gp = gpar(fontface = "bold", fontsize = 12, col = "black"))
 
 grid.text((paste("b")),
-          x = unit(0.54, "npc"), y = unit(0.992, "npc"), just = c("left", "top"), 
+          x = unit(0.52, "npc"), y = unit(0.992, "npc"), just = c("left", "top"), 
           gp = gpar(fontface = "bold", fontsize = 12, col = "black"))
 
 grid.text((paste("c")),
-          x = unit(0.79, "npc"), y = unit(0.992, "npc"), just = c("left", "top"), 
+          x = unit(0.78, "npc"), y = unit(0.992, "npc"), just = c("left", "top"), 
           gp = gpar(fontface = "bold", fontsize = 12, col = "black"))
 
 grid.text((paste("d")),
-          x = unit(0.29, "npc"), y = unit(0.493, "npc"), just = c("left", "top"), 
+          x = unit(0.27, "npc"), y = unit(0.493, "npc"), just = c("left", "top"), 
           gp = gpar(fontface = "bold", fontsize = 12, col = "black"))
 
 grid.text((paste("e")),
-          x = unit(0.54, "npc"), y = unit(0.493, "npc"), just = c("left", "top"), 
+          x = unit(0.52, "npc"), y = unit(0.493, "npc"), just = c("left", "top"), 
           gp = gpar(fontface = "bold", fontsize = 12, col = "black"))
 
 grid.text((paste("f")),
-          x = unit(0.79, "npc"), y = unit(0.493, "npc"), just = c("left", "top"), 
+          x = unit(0.78, "npc"), y = unit(0.493, "npc"), just = c("left", "top"), 
           gp = gpar(fontface = "bold", fontsize = 12, col = "black"))
 
 
@@ -335,5 +357,5 @@ grid.lines(x = unit(c(0.08, 0.985), "npc"),
 dev.off()
 read_docx() %>% 
   body_add_img(src = filename, width = 6, height = 7)%>% 
-  print(target = "Results/fig4.docx")
+  print(target = "Results/Fig_4.docx")
 
