@@ -83,6 +83,7 @@ par(mfrow = c(1, 1))
 summary(m1_SR)
 anova(m1_SR)
 
+
 # Marginal means and pairwise differences 
 
 emmeans::emmeans(m1_SR, list(pairwise ~ Tr_Group))
@@ -130,6 +131,10 @@ ggplot(data = model_means_TL) +
                  width = 0.05, color = "black") +
    geom_text(aes(y = emmean, x = Tr_level, label = str_trim(.group)),
             position = position_nudge(x = 0.1), hjust = 0,color = "black") 
+
+
+
+
 
 ## AG_BG ----
 sowndiv_AG_BG$AG_BG
@@ -742,22 +747,22 @@ ggplot(data = model_means_AG_BG) +
 
 
 
-results <-rbind(anova(m1_SR)[1,],anova(m3_SR)[1,], 
-                anova(m1_FG)[1,], anova(m3_FG)[1,],
-                anova(m1_leg)[1,],anova(m3_leg)[1,],
-                anova(m1_gr)[1,],anova(m3_gr)[1,],
-                anova(m1_SH)[1,],anova(m3_SH)[1,],
-                anova(m1_TH)[1,],anova(m3_TH)[1,]) 
+results <-rbind(anova(m1_SR)[1,], anova(m2_SR)[1,], anova(m3_SR)[1,], 
+                anova(m1_FG)[1,], anova(m2_FG)[1,], anova(m3_FG)[1,],
+                anova(m1_leg)[1,],anova(m2_leg)[1,], anova(m3_leg)[1,],
+                anova(m1_gr)[1,],anova(m2_gr)[1,], anova(m3_gr)[1,],
+                anova(m1_SH)[1,],anova(m2_SH)[1,], anova(m3_SH)[1,],
+                anova(m1_TH)[1,],anova(m2_TH)[1,],anova(m3_TH)[1,]) 
 
 
-row.names(results)= c("Ecosystem function for SR", "AG_BG for SR", 
-                      "Ecosystem function for FG", "AG_BG for FG",
-                      "Ecosystem function for leg", "AG_BG for leg",
-                      "Ecosystem function for grass", "AG_BG for grass",
-                      "Ecosystem function for SH", "AG_BG for SH",
-                      "Ecosystem function for TH", "AG_BG for TH")
+row.names(results)= c("TrGr for SR", "TL for SR", "AG_BG for SR", 
+                      "TrGr for FG", "TL for FG", "AG_BG for FG",
+                      "TrGr for leg", "TL for leg", "AG_BG for leg",
+                      "TrGr for grass", "TL for grass", "AG_BG for grass",
+                      "TrGr for SH", "TL for SH", "AG_BG for SH",
+                      "TrGr for TH", "TL for TH","AG_BG for TH")
 
 results
 
 
-write_csv(results, "Results/Tables_3_4_5.csv")
+write.csv(results, "Results/Tables_3_4_5.csv", row.names=TRUE)

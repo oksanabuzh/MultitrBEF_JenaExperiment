@@ -53,6 +53,27 @@ summarised
 
 write_csv (summarised, "Results/Summary_Effects_MainText.csv")
 
+# Calculate % total significant effects
+
+factor(summarised$predictor)
+
+Total <- summarised %>% 
+  mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
+                                            "leg.ef", "gr.ef",
+                                            "sh.ef", "th.ef"))) %>% 
+  group_by(predictor, Dimens) %>% 
+  summarise(all=mean(sum), sign=sum(Total)) %>% 
+  mutate(prcnt=round(sign*100/all, digits = 2)) 
+
+# Fluxes
+Total %>%
+  filter(Dimens=="flow") %>% 
+  select(predictor, sign, prcnt)
+
+# Stocks
+Total %>%
+  filter(Dimens=="stock") %>% 
+  select(predictor, sign, prcnt)
 
 # 2. for the analysis in the supplementary ----
 
