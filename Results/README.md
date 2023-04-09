@@ -22,4 +22,7 @@
 
 # Files for the supplementary materials:
 
-"Summary_Effects_SI.csv" - proportion of significant positive and negative plant diversity effects for AG subnetwork, BG subnetwork and Total network (all effects) for each diversity facet ; see code "Analysis/Proportion_of_effects.R" 
+"Summary_Effects_SI.csv" - proportion of significant positive and negative plant diversity effects for AG subnetwork, BG subnetwork and Total network (all effects) for each diversity facet; see code "Analysis/Proportion_of_effects.R" 
+
+
+"Fig_R2_Stocks.png" - Bubble chart showing variance explained by each plant diversity facet for each standing stock (partial R2 from regression models) and for the Total Network Stock (sum of partial R2 for all stocks across the tropic network); see code "Analysis/R2_Stocks.R" 
