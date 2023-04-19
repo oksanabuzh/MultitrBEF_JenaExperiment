@@ -26,3 +26,5 @@
 
 
 "Fig_R2_Stocks.png" - Bubble chart showing variance explained by each plant diversity facet for each standing stock (partial R2 from regression models) and for the Total Network Stock (sum of partial R2 for all stocks across the tropic network); see code "Analysis/R2_Stocks.R" 
+
+"Fig_R2_Fluxes.png" - Bubble chart showing variance explained by each plant diversity facet for fluxes (partial R2 from regression models) and for the Total Network Energy Flow (sum of partial R2 for all fluxes across the tropic network).

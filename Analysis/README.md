@@ -19,6 +19,9 @@ In the supplementary the p-value is calculated from type II sum of squares (usin
 "check_results" file includes few selected models fitted manually, and compared their results with the results derived by the function "run_model_all_variables".
 
 
+"Proportion of effects" - filters out the significant effects of each facet on each flow and stock and gives summery statistics for the proportions of effects of each biodiversity facet
+
+
 "Context_dependency_Slopes" - tests whether the plant diversity effects on stocks depend on  trophic contexts. Specifically we tested if the standardized effects of each target predictor on biomass stocks (n=12) differ between 
         - trophic groups ("Plants", "Detritus", "Herbivores", "Decomposers","Omnivores", "Carnivores"),         - trophic levels (1st, 2nd, 3rd), and between 
         - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground). 
@@ -37,8 +40,10 @@ An analysis of variance with sequential sum of squares was applied (using anova(
 "Fig.5" - code for creating plots for the biodiversity effects on stocks grouped by trophic groups, trophic levels and AG vs BG.
 
 
-"R2_Stocks" - code for creating Bubble chart showing variance explained by each plant diversity facet for each standing stock (partial R2 from regression models) and for the Total Network Stock (sum of partial R2 for all stocks across the tropic network).
+"R2_Stocks" - code for creating bubble chart showing variance explained by each plant diversity facet for each standing stock (partial R2 from regression models) and for the Total Network Stock (sum of partial R2 for all stocks across the tropic network).
 
+
+"R2_Fluxes" - code for creating bubble chart showing variance explained by each plant diversity facet for fluxes (partial R2 from regression models) and for the Total Network Energy Flow (sum of partial R2 for all fluxes across the tropic network).
 
 # NOT USED CODE (to remove)
 

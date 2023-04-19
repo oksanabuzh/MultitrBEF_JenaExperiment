@@ -5,6 +5,7 @@ rm(list=ls(all=TRUE))
 
 # Packages
 library(tidyverse)
+library(ggplot2)
 
 # Data 
 df_main <- read_csv("Results/mod_main_text.csv")
@@ -63,30 +64,58 @@ sum <- df_all %>%
   mutate(response="Total Network Stock")
 
 
+
 my.data <- rbind(df_all %>% 
                    select(response, predictor, r2_part),
                  sum)
 
-# # Bubble chart showing partial R2
+levels(my.data$response)
 
-fig <- ggplot(my.data, aes(x = predictor, 
+my.data <- my.data %>% mutate(response=fct_relevel(response, c("Total Network Stock",
+                                                               "BG Carnivores",
+                                                               "BG Omnivores",
+                                                               "BG Herbivores",
+                                                               "BG Decomposers",
+                                                               "Soil Microorganisms",
+                                                               "SOM",
+                                                               "Plants",
+                                                               "AG Litter",
+                                                               "AG Decomposers",
+                                                               "AG Herbivores",
+                                                               "AG Omnivores",
+                                                               "AG Carnivores"))) 
+  
+
+
+  # # Bubble chart showing partial R2
+
+fig <- ggplot(my.data%>%
+                mutate(r2_part = (ifelse( r2_part>0, r2_part, NA))),
+              aes(x = predictor, 
                      y = response,
                      colour = predictor,
                      size = r2_part)) +
   geom_point() +
- # geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
+ geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
   scale_x_discrete(position = "top") +
-  scale_size_continuous(range = c(0, 18)) + 
+  scale_size_continuous(range = c(2, 17)) + 
   scale_color_brewer(palette =  "Paired") +
-  labs(x = NULL, y = NULL) +
-  theme(legend.position = "none",
+#  labs(x = NULL, y = NULL) +
+  theme(legend.position = "bottom",
+       legend.key = element_rect(fill = NA, color = NA),
         panel.background = element_blank(),
         panel.grid = element_line(colour = "grey80"),
         axis.ticks = element_blank(),
         axis.text.y=element_text(colour = "black", size=15),
-        axis.text.x=element_text(colour = "black", size=15))
+        axis.text.x=element_text(colour = "black", size=15))+
+labs(x = NULL, y = NULL, 
+     size=bquote("Variance explained, partial R"^"2")) +
+  guides(colour=FALSE, size = guide_legend(override.aes = list(colour = "grey"))) +
+  theme(legend.title=element_text(size=14),
+        legend.text=element_text(size=rel(1.2)))
 
 fig
+
 
 ggsave(fig, file="Results/Fig_R2_Stocks.png", width = 34,
        height = 25,
