@@ -46,12 +46,12 @@ df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-                       levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
     ),
     Ecos_Function = case_match(Ecos_Function,
-                               "Carbon_uptake" ~ "Carbon uptake",
-                               "Detritus_production" ~ "Detritus production",
-                               .default = Ecos_Function
+      "Carbon_uptake" ~ "Carbon uptake",
+      "Detritus_production" ~ "Detritus production",
+      .default = Ecos_Function
     )
   ) %>%
   mutate(Ecos_Function = factor(Ecos_Function, levels = c(
@@ -60,12 +60,12 @@ df_to_plot_flow <- df_to_plot_flow %>%
   )))
 
 # Add significance
-df_to_plot_flow <- df_to_plot_flow %>% 
+df_to_plot_flow <- df_to_plot_flow %>%
   mutate(significance = case_when(
     Ecos_Function %in% c("AG", "BG") & predictor == "sowndiv" ~ "s",
     !(Ecos_Function %in% c("AG", "BG")) & predictor == "leg.ef" ~ "s",
-    TRUE ~ "ns")
-  )
+    TRUE ~ "ns"
+  ))
 
 # Prepare stocks ----------------------------------------------------------
 
@@ -80,19 +80,21 @@ df_all_stocks <- df_main %>%
 
 # combine column AG_BG, Tr_Group and Trophic_level into one for plotting and grouping
 df_to_plot_stocks <- df_all_stocks %>%
-  mutate(Trophic_level = as.character(Trophic_level)) %>% 
-  pivot_longer(c(AG_BG, Tr_Group, Trophic_level), names_to = "group",
-               values_to = "group_value") %>%
+  mutate(Trophic_level = as.character(Trophic_level)) %>%
+  pivot_longer(c(AG_BG, Tr_Group, Trophic_level),
+    names_to = "group",
+    values_to = "group_value"
+  ) %>%
   filter(group_value != "AG_BG")
 # Add root and shoot biomass for AG and BG
 
 # Add the root and shoot stock for AG and BG calculation
-df_root_shoot <- df_rootShoot %>% 
-  mutate(group = "AG_BG") %>% 
+df_root_shoot <- df_rootShoot %>%
+  mutate(group = "AG_BG") %>%
   mutate(group_value = case_when(
     str_detect(response, "root") ~ "BG",
-    str_detect(response, "shoot")~ "AG"
-  )) %>% 
+    str_detect(response, "shoot") ~ "AG"
+  )) %>%
   select(predictor, effect_size_st, group, group_value)
 
 df_to_plot_stocks <- bind_rows(df_root_shoot, df_to_plot_stocks)
@@ -113,15 +115,15 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
   left_join(df_colors_stocks, by = c("group_value", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-                       levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
     )
   ) %>%
   mutate(group_value = factor(group_value, levels = c(
-    "BG", "AG","1","2","3","Plants", "Detritus", "Herbivores", "Decomposers",
+    "BG", "AG", "1", "2", "3", "Plants", "Detritus", "Herbivores", "Decomposers",
     "Omnivores", "Carnivores"
   )))
 
-df_to_plot_stocks <- df_to_plot_stocks %>% 
+df_to_plot_stocks <- df_to_plot_stocks %>%
   mutate(significance = "ns")
 
 # Make flow plot ----------------------------------------------------------
@@ -155,60 +157,61 @@ predictor_label_stocks <- c(
 )
 
 # Format x-axis so that 0 is printed as 0 and not as 0.00
-plain <- function(x,...) {
+plain <- function(x, ...) {
   format(x, ..., scientific = FALSE, drop0trailing = TRUE)
 }
 
 jitter_width <- 0.05
 jitter_size <- 0.6
-sizes_signif <- c(1.5,3.5)
+sizes_signif <- c(1, 2)
+bar_size <- 0.5
+mean_point_size <- 1.8
 
 plot_flow <- df_to_plot_flow %>%
   ggplot(aes(y = Ecos_Function, x = effect_size_st, color = color)) +
-  geom_jitter(width = jitter_width, color = "grey70", size = jitter_size) +
-  stat_summary(fun = "mean", geom = "point", aes(size = significance)) +
+  geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
+  geom_jitter(width = jitter_width, alpha = 0.2, size = jitter_size) +
+  stat_summary(fun = "mean", geom = "point", size = mean_point_size) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
-    fun.args = list(conf.int = 0.95), width = 0, size = 1,#aes(linewidth = significance)
-  )+
+    fun.args = list(conf.int = 0.95), width = 0, size = bar_size
+  ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label_flows
   ), nrow = 1) +
   geom_hline(yintercept = 2.5, color = "azure3") +
   labs(x = "Standardized effect sizes") +
-  scale_x_continuous(breaks = c(-0.25,0,0.25), labels = plain) +
-  scale_size_manual(values = sizes_signif)
+  scale_x_continuous(breaks = c(-0.25, 0, 0.25), labels = plain)
 
 # Make stocks plot --------------------------------------------------------
 # make the plot
 plot_stocks <- df_to_plot_stocks %>%
   ggplot(aes(y = group_value, x = effect_size_st, color = color)) +
-  geom_jitter(width = jitter_width, color = "grey70", size = jitter_size) +
-  stat_summary(fun = "mean", geom = "point", aes(size = significance)) +
+  geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
+  geom_jitter(width = jitter_width, alpha = 0.2, size = jitter_size) +
+  stat_summary(fun = "mean", geom = "point", size = mean_point_size) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
-    fun.args = list(conf.int = 0.95), width = 0, size = 1
-  )+
+    fun.args = list(conf.int = 0.95), width = 0, size = bar_size
+  ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label_stocks
-  ), nrow=1) +
+  ), nrow = 1) +
   geom_hline(yintercept = 2.5, color = "azure3") +
   geom_hline(yintercept = 5.5, color = "azure3") +
-  scale_x_continuous(breaks = c(-2,-1,0,1,2)) +
-  labs(x = "Standardized effect size")+
-  scale_size_manual(values = sizes_signif)
+  scale_x_continuous(breaks = c(-2, -1, 0, 1, 2)) +
+  labs(x = "Standardized effect size")
 
 
 # Combine the plots into one ----------------------------------------------
 plot <- (plot_flow / plot_stocks) &
-  geom_vline(xintercept = 0, linetype = "dashed") &
   scale_color_manual(values = c("red", "royalblue")) &
-  theme_bw() &
+  theme_bw(base_size = 14) &
   theme(
     legend.position = "none",
     panel.border = element_rect(fill = NA, colour = "grey30", linewidth = 0.8),
-    axis.text.x = element_text(size = 8, colour = "black"),
-    axis.text.y = element_text(size = 10, colour = "black"),
+    axis.text.x = element_text(size = 10, colour = "black"),
+    axis.text.y = element_text(size = 12, colour = "black"),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     panel.grid = element_blank(),
@@ -218,10 +221,10 @@ plot <- (plot_flow / plot_stocks) &
     legend.title = element_blank(),
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, face = "bold"),
-    plot.margin = margin(t = 10, b=1,l=0,r=0)
+    plot.margin = margin(t = 0, b = 20, l = 0, r = 0)
   )
-  
+
 # Save the plot
 ggsave("Results/Fig4_5_compined.png", plot,
-       width = 20, height = 20, units = "cm"
+  width = 20, height = 20, units = "cm"
 )
