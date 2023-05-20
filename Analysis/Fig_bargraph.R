@@ -74,7 +74,7 @@ barplot_effects <- dat %>%
 
 # Save plot ---------------------------------------------------------------
 
-ggsave("Results/barplot_effects.png",
+ggsave("Results/Fig.3.png",
   width = 16, height = 8, units = "cm",
   scale = 1.3
 )
