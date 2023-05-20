@@ -1,5 +1,7 @@
 # Analysis
+
 Contains codes for testing the effects of each diversity facet on each stock and flow across the food web diversity facets: "sowndiv" - species richness, "numfg" - number of functional groups, "leg.ef" - presence of legumes, "gr.ef" - presence of grasses, "sh.ef" - presence of short herbs, "th.ef"- presence of tall herbs.
+
 
 # Files:
 
@@ -33,11 +35,9 @@ An analysis of variance with sequential sum of squares was applied (using anova(
          - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground).
 An analysis of variance with sequential sum of squares was applied (using anova()).
 
+"Fig.3_bargraph" - code for creating plots (main text) for the proportion of flows and stocks in the network that were significantly affected by each plant diversity facet when it was fitted first in the model.
 
-"Fig.4" - code for creating plots for the biodiversity effects on fluxes grouped by ecosystem functions, and AG vs BG.
-
-
-"Fig.5" - code for creating plots for the biodiversity effects on stocks grouped by trophic groups, trophic levels and AG vs BG.
+"Fig.4_new" - code for creating plots for the biodiversity effects on fluxes grouped by ecosystem functions, and AG vs BG and on stocks grouped by trophic groups, trophic levels and AG vs BG.
 
 
 "R2_Stocks" - code for creating bubble chart showing variance explained by each plant diversity facet for each standing stock (partial R2 from regression models) and for the Total Network Stock (sum of partial R2 for all stocks across the tropic network).
@@ -49,4 +49,6 @@ An analysis of variance with sequential sum of squares was applied (using anova(
 
 "Context_dependency_Fluxes_vs_Stocks" - tests whether the plant diversity effects differ berween dimensions of ecosystem functions: fluxes vs stocks
 
+"Fig.4" - code for creating plots for the biodiversity effects on fluxes grouped by ecosystem functions, and AG vs BG.
 
+"Fig.5" - code for creating plots for the biodiversity effects on stocks grouped by trophic groups, trophic levels and AG vs BG.

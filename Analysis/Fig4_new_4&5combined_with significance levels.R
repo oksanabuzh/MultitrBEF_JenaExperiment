@@ -171,7 +171,7 @@ mean_point_size <- 1.8
 plot_flow <- df_to_plot_flow %>%
   ggplot(aes(y = Ecos_Function, x = effect_size_st, color = color)) +
   geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
-  #geom_jitter(height = 0.1, width = 0, alpha = 0.2, size = jitter_size) +
+ # geom_jitter(height = 0.1, width = 0, alpha = 0.2, size = jitter_size) +
   stat_summary(fun = "mean", geom = "point", aes(size = significance))+#size = mean_point_size) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
@@ -191,7 +191,7 @@ plot_flow <- df_to_plot_flow %>%
 plot_stocks <- df_to_plot_stocks %>%
   ggplot(aes(y = group_value, x = effect_size_st, color = color)) +
   geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
-  #geom_jitter(height = 0.3, width = 0, alpha = 0.2, size = jitter_size) +
+ # geom_jitter(height = 0.3, width = 0.05, alpha = 0.2, size = jitter_size) +
   stat_summary(fun = "mean", geom = "point", aes(size = significance)) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
@@ -230,6 +230,6 @@ plot <- (plot_flow / plot_stocks) &
   )
 
 # Save the plot
-ggsave("Results/Fig4_5_compined_sizes.png", plot,
+ggsave("Results/Fig4_new_SignDiffer.png", plot,
   width = 20, height = 20, units = "cm"
 )

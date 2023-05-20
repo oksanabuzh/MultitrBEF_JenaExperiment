@@ -56,12 +56,17 @@ names(stat_TrGroup)
 
 # check result:
 df_check <- df_all %>% 
-  filter(Tr_Group=="Herbivores")
+  filter(Tr_Group=="Carnivores")
 
-  
+df_check  
+
 Rmisc::CI(df_check$sowndiv, ci = 0.95)
 
+#   upper        mean       lower 
+# 1.15440099 -0.07179485 -1.29799069 
 
+stat_TrGroup%>% 
+  filter(Group=="Carnivores")
 
 ## for trophic level-----
 
