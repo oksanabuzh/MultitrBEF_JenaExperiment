@@ -21,7 +21,7 @@ m1<-lm(Plants.Stock ~  block +  log2(sowndiv) + leg.ef + gr.ef + sh.ef + th.ef, 
 
 anova(m1)
 summary(m1)
-
+car::Anova(m1)
 
 par(mfrow = c(2, 2))
 plot(m1)
@@ -96,6 +96,7 @@ st_estimate
 # Compare with the results derived by the function: ----
 
 df_main <- read.csv("Results/mod_main_text.csv")
+df_main <- read.csv("Results/TableS3.csv")
 
 
 lambda
@@ -103,6 +104,7 @@ coef(m2)["log2(sowndiv)"] # estimate
 anova(m2)["log2(sowndiv)", "Pr(>F)"] # p value
 #R2 model
 summary(m2)$r.squared 
+
 #R2 partial
 r2glmm::r2beta(m2, method = "nsj", partial = TRUE)%>%
 filter(Effect == "sowndiv_log2") %>% pull(Rsq) %>% round(3)
@@ -115,7 +117,7 @@ st_estimate # standard. effect size (back-transformed)
 
 df_main %>% 
   filter(response=="Plants.Stock", predictor=="sowndiv") %>% 
-  select(lambda, estimate, p, R2_model, r2_part, effect_size, effect_size_st)
+  select(lambda, estimate, p, F_val, R2_model, r2_part, effect_size, effect_size_st)
 
 
 # check the range of the standardized coefficients

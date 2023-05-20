@@ -51,6 +51,7 @@ str(mod)
 summary(mod)
 
 write_csv(mod, "Results/mod_main_text.csv")
+write_csv(mod, "Results/TableS3.csv")
 
 # Analysis supplementary --------------------------------------------------
 # Run the `run_model_all_vars` function for each line of `all_models`
@@ -68,6 +69,7 @@ str(mod_supp)
 summary(mod_supp)
 
 write_csv(mod_supp, "Results/mod_supp.csv")
+write_csv(mod, "Results/TableS4.csv")
 
 # Check results -----------------------------------------------------------
 

@@ -83,9 +83,15 @@ run_model_all_vars <- function(dat, first, y, type,
                 1 for anova or 2 vor car::Anova, but value is ", type, " instead."))
   }
 
+  # Extract F value (Oksana)
+  Fval <- filter(pval, variable == first) %>% 
+    pull(`F value`)
+ 
   pval <- filter(pval, variable == first) %>%
     pull(`Pr(>F)`)
 
+ 
+  
   # Extract model results ---------------------------------------------------
 
   # estimates
@@ -146,6 +152,8 @@ run_model_all_vars <- function(dat, first, y, type,
   # standardize the effect_size
   effect_size_st <- effect_size * (sd_values %>% pull(first) / sd_values %>% pull(y))
 
+
+  
   # Combine and return results ----------------------------------------------
 
   result <- list(
@@ -154,6 +162,7 @@ run_model_all_vars <- function(dat, first, y, type,
     r2_part = r2_part,
     R2_model = summary(model)$r.squared,
     p = pval,
+    F_val = Fval,
     estimate = estimates,
     effect_size = effect_size,
     effect_size_st = effect_size_st,
@@ -162,3 +171,4 @@ run_model_all_vars <- function(dat, first, y, type,
   )
   return(result)
 }
+
