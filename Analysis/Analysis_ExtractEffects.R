@@ -51,7 +51,15 @@ str(mod)
 summary(mod)
 
 write_csv(mod, "Results/mod_main_text.csv")
-write_csv(mod, "Results/TableS3.csv")
+
+# merge with groups of functions
+group <- read_csv ("Data/EF_grouped.csv")
+names(group)
+
+df_all <- mod %>% 
+  left_join(group, by = join_by(response)) 
+
+write_csv(df_all, "Results/TableS3.csv")
 
 # Analysis supplementary --------------------------------------------------
 # Run the `run_model_all_vars` function for each line of `all_models`
@@ -69,7 +77,15 @@ str(mod_supp)
 summary(mod_supp)
 
 write_csv(mod_supp, "Results/mod_supp.csv")
-write_csv(mod, "Results/TableS4.csv")
+
+# merge with groups of functions
+group <- read_csv ("Data/EF_grouped.csv")
+names(group)
+
+df_all_supp <- mod_supp %>% 
+  left_join(group, by = join_by(response)) 
+
+write_csv(df_all_supp, "Results/TableS4.csv")
 
 # Check results -----------------------------------------------------------
 
