@@ -1,8 +1,3 @@
-# Buzhdygan et al.   "Facets of plant diversity  differentially affect energy dynamics 
-#  in grasslands depending on trophic contexts"
-# in 'Ecology'
-# oksana.buzh@fu-berlin.de
-
 # Tests for the effects of each diversity facet on each stock and flow across the food web
 # Main analysis (in the main text) and supplementary analyses
 
