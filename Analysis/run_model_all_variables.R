@@ -83,10 +83,11 @@ run_model_all_vars <- function(dat, first, y, type,
                 1 for anova or 2 vor car::Anova, but value is ", type, " instead."))
   }
 
-  # Extract F value (Oksana)
+  # Extract F value 
   Fval <- filter(pval, variable == first) %>% 
     pull(`F value`)
  
+   # Extract p value
   pval <- filter(pval, variable == first) %>%
     pull(`Pr(>F)`)
 
