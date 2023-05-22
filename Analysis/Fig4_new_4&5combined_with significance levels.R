@@ -1,5 +1,8 @@
-# Plots for the fluxes
-# grouped by ecosystem functions, and AG vs BG
+# Fig 4 plots (include highlighted significant differences among groups)
+
+# flows grouped by ecosystem functions, and AG vs BG
+# stocks grouped by trophic groups, trophic levels and AG vs BG.
+
 
 # Packages
 library(tidyverse)
