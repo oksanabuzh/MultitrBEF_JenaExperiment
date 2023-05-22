@@ -24,7 +24,7 @@ In the supplementary the p-value is calculated from type II sum of squares (usin
 "Proportion of effects" - filters out the significant effects of each facet on each flow and stock and gives summery statistics for the proportions of effects of each biodiversity facet
 
 
-"Context_dependency_Slopes" - tests whether the plant diversity effects on stocks depend on  trophic contexts. Specifically we tested if the standardized effects of each target predictor on biomass stocks (n=12) differ between 
+"Context_dependency_Stocks" - tests whether the plant diversity effects on stocks depend on  trophic contexts. Specifically we tested if the standardized effects of each target predictor on biomass stocks (n=12) differ between 
         - trophic groups ("Plants", "Detritus", "Herbivores", "Decomposers","Omnivores", "Carnivores"),         - trophic levels (1st, 2nd, 3rd), and between 
         - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground). 
 An analysis of variance with sequential sum of squares was applied (using anova()).
@@ -37,8 +37,9 @@ An analysis of variance with sequential sum of squares was applied (using anova(
 
 "Fig.3_bargraph" - code for creating plots (main text) for the proportion of flows and stocks in the network that were significantly affected by each plant diversity facet when it was fitted first in the model.
 
-"Fig.4_new" - code for creating plots for the biodiversity effects on fluxes grouped by ecosystem functions, and AG vs BG and on stocks grouped by trophic groups, trophic levels and AG vs BG.
+"Fig.4_new_4&5combined" - code for creating plots for the biodiversity effects on fluxes grouped by ecosystem functions, and AG vs BG and on stocks grouped by trophic groups, trophic levels and AG vs BG.
 
+"Fig.4_new_4&5combined_with significance" - same as "Fig.4_new_4&5combined" + highlighted significance of differences among groups
 
 "R2_Stocks" - code for creating bubble chart showing variance explained by each plant diversity facet for each standing stock (partial R2 from regression models) and for the Total Network Stock (sum of partial R2 for all stocks across the tropic network).
 
