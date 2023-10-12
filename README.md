@@ -1,8 +1,8 @@
 
 # Code for 
-# Buzhdygan et al. (2023) Ecology (in preparation)
+# Buzhdygan et al. (2023) Ecology (submitted)
 
-# "Plant diversity facets affect energy dynamics in grasslands depending on trophic contexts" (preliminary title)
+# "Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts" 
 
 
 # Analysis 
