@@ -1,54 +1,54 @@
-response,Dimens,AG_BG,Ecos_Function,Tr_Group,Trophic_level,Explanations to response
-o_Plants,flow,AG,Carbon_uptake,NA,NA,Carbon uptake from environment (o) to Plants
-Plants_AG.Herbivores,flow,AG,Herbivory,NA,NA,Herbivory by AG Herbivores
-AG.Herbivores_AG.Carnivores,flow,AG,Predation,NA,NA,Predation of AG Herbivores by AG Carnivores
-AG.Decomposers_AG.Carnivores,flow,AG,Predation,NA,NA,Predation of AG Decomposers by AG Carnivores
-Plants_AG.Omnivores,flow,AG,Herbivory,NA,NA,Herbivory by AG Omnivores
-AG.Herbivores_AG.Omnivores,flow,AG,Predation,NA,NA,Predation of AG Herbivores by AG Omnivores
-AG.Decomposers_AG.Omnivores,flow,AG,Predation,NA,NA,Predation of AG Decomposers by AG Omnivores
-AG.Litter_AG.Omnivores,flow,AG,Decomposition,NA,NA,Decomposition by AG Omnivores
-AG.Litter_AG.Decomposers,flow,AG,Decomposition,NA,NA,Decomposition by AG Decomposers
-BG.Herbivores_BG.Carnivores,flow,BG,Predation,NA,NA,Predation of BG Herbivores by BG Carnivores
-BG.Decomposers_BG.Carnivores,flow,BG,Predation,NA,NA,Predation of BG Decomposers by BG Carnivores
-Plants_BG.Herbivores,flow,BG,Herbivory,NA,NA,Herbivory by BG Herbivores
-SOM_BG.Decomposers,flow,BG,Decomposition,NA,NA,Decomposition by BG Decomposers
-Plants_BG.Omnivores,flow,BG,Herbivory,NA,NA,Herbivory by BG Omnivores
-BG.Herbivores_BG.Omnivores,flow,BG,Predation,NA,NA,Predation of BG Herbivores by BG Omnivores
-BG.Decomposers_BG.Omnivores,flow,BG,Predation,NA,NA,Predation of BG Decomposers by BG Omnivores
-SOM_BG.Omnivores,flow,BG,Decomposition,NA,NA,Decomposition by BG Omnivores
-Soil.Microorganisms_BG.Omnivores,flow,BG,Predation,NA,NA,Predation of soil microorganisms by BG Omnivores
-Plants_SOM,flow,BG,Detritus_production,NA,NA,Plant root mortality
-BG.Carnivores_SOM,flow,BG,Detritus_production,NA,NA,Excretion and natural mortality of 
-BG.Herbivores_SOM,flow,BG,Detritus_production,NA,NA,Excretion and natural mortality of BG Herbivores
-BG.Decomposers_SOM,flow,BG,Detritus_production,NA,NA,Excretion and natural mortality of BG Decomposers
-BG.Omnivores_SOM,flow,BG,Detritus_production,NA,NA,Excretion and natural mortality of BG Omnivores
-AG.Litter_SOM,flow,BG,Detritus_production,NA,NA,Fauna burial activity (mechanical transfer and transformation of aboveground into belowground subnetwork)
-Soil.Microorganisms_SOM,flow,BG,Detritus_production,NA,NA,Excretion and natural mortality of soil microorganisms
-Plants_AG.Litter,flow,AG,Detritus_production,NA,NA,Plant aboveground mortality
-AG.Herbivores_AG.Litter,flow,AG,Detritus_production,NA,NA,Excretion and natural mortality of AG Herbivores
-AG.Carnivores_AG.Litter,flow,AG,Detritus_production,NA,NA,Excretion and natural mortality of AG Carnivores
-AG.Omnivores_AG.Litter,flow,AG,Detritus_production,NA,NA,Excretion and natural mortality of AG Omnivores
-AG.Decomposers_AG.Litter,flow,AG,Detritus_production,NA,NA,Excretion and natural mortality of AG Decomposers
-SOM_Soil.Microorganisms,flow,BG,Decomposition,NA,NA,Decomposition by soil microorganisms
-Plants_o,flow,AG_BG,Respiration,NA,NA,Respiration of Plants
-AG.Herbivores_o,flow,AG,Respiration,NA,NA,Respiration of AG Herbivores
-AG.Carnivores_o,flow,AG,Respiration,NA,NA,Respiration of AG Carnivores
-AG.Omnivores_o,flow,AG,Respiration,NA,NA,Respiration of AG Omnivores
-AG.Decomposers_o,flow,AG,Respiration,NA,NA,Respiration of AG Decomposers
-BG.Carnivores_o,flow,BG,Respiration,NA,NA,Respiration of BG Carnivores
-BG.Herbivores_o,flow,BG,Respiration,NA,NA,Respiration of BG Herbivores
-BG.Decomposers_o,flow,BG,Respiration,NA,NA,Respiration of BG Decomposers
-BG.Omnivores_o,flow,BG,Respiration,NA,NA,Respiration of BG Omnivores
-Soil.Microorganisms_o,flow,BG,Respiration,NA,NA,Respiration of soil microorganisms
-Plants.Stock,stock,AG_BG,NA,Plants,1,Biomass stock of Plants
-AG.Herbivores.Stock,stock,AG,NA,Herbivores,2,Biomass stock of AG Herbivores
-AG.Carnivores.Stock,stock,AG,NA,Carnivores,3,Biomass stock of AG Carnivores
-AG.Omnivores.Stock,stock,AG,NA,Omnivores,3,Biomass stock of AG Omnivores
-AG.Decomposers.Stock,stock,AG,NA,Decomposers,2,Biomass stock of AG Decomposers
-BG.Herbivores.Stock,stock,BG,NA,Herbivores,2,Biomass stock of BG Herbivores
-BG.Carnivores.Stock,stock,BG,NA,Carnivores,3,Biomass stock of BG Carnivores
-BG.Omnivores.Stock,stock,BG,NA,Omnivores,3,Biomass stock of BG Omnivores
-BG.Decomposers.Stock,stock,BG,NA,Decomposers,2,Biomass stock of BG Decomposers
-Soil.Microorganisms.Stock,stock,BG,NA,Decomposers,2,Biomass stock of soil microorganisms
-AG.Litter.Stock,stock,AG,NA,Detritus,1,Standing stock of AG litter
-SOM.Stock,stock,BG,NA,Detritus,1,Standing stock of soil organic carbon
+response,Dimens,AG_BG,Ecos_Function,Tr_Group,Trophic_level,flux_out_stock,flux_in_stock,Explanations to response
+o_Plants,flow,AG,Carbon_uptake,NA,NA,NA,Plants,Carbon uptake from environment (o) to Plants
+Plants_AG.Herbivores,flow,AG,Herbivory,NA,NA,Plants,AG.Herbivores,Herbivory by AG Herbivores
+AG.Herbivores_AG.Carnivores,flow,AG,Predation,NA,NA,AG.Herbivores,AG.Carnivores,Predation of AG Herbivores by AG Carnivores
+AG.Decomposers_AG.Carnivores,flow,AG,Predation,NA,NA,AG.Decomposers,AG.Carnivores,Predation of AG Decomposers by AG Carnivores
+Plants_AG.Omnivores,flow,AG,Herbivory,NA,NA,Plants,AG.Omnivores,Herbivory by AG Omnivores
+AG.Herbivores_AG.Omnivores,flow,AG,Predation,NA,NA,AG.Herbivores,AG.Omnivores,Predation of AG Herbivores by AG Omnivores
+AG.Decomposers_AG.Omnivores,flow,AG,Predation,NA,NA,AG.Decomposers,AG.Omnivores,Predation of AG Decomposers by AG Omnivores
+AG.Litter_AG.Omnivores,flow,AG,Decomposition,NA,NA,AG.Litter,AG.Omnivores,Decomposition by AG Omnivores
+AG.Litter_AG.Decomposers,flow,AG,Decomposition,NA,NA,AG.Litter,AG.Decomposers,Decomposition by AG Decomposers
+BG.Herbivores_BG.Carnivores,flow,BG,Predation,NA,NA,BG.Herbivores,BG.Carnivores,Predation of BG Herbivores by BG Carnivores
+BG.Decomposers_BG.Carnivores,flow,BG,Predation,NA,NA,BG.Decomposers,BG.Carnivores,Predation of BG Decomposers by BG Carnivores
+Plants_BG.Herbivores,flow,BG,Herbivory,NA,NA,Plants,BG.Herbivores,Herbivory by BG Herbivores
+SOM_BG.Decomposers,flow,BG,Decomposition,NA,NA,SOM,BG.Decomposers,Decomposition by BG Decomposers
+Plants_BG.Omnivores,flow,BG,Herbivory,NA,NA,Plants,BG.Omnivores,Herbivory by BG Omnivores
+BG.Herbivores_BG.Omnivores,flow,BG,Predation,NA,NA,BG.Herbivores,BG.Omnivores,Predation of BG Herbivores by BG Omnivores
+BG.Decomposers_BG.Omnivores,flow,BG,Predation,NA,NA,BG.Decomposers,BG.Omnivores,Predation of BG Decomposers by BG Omnivores
+SOM_BG.Omnivores,flow,BG,Decomposition,NA,NA,SOM,BG.Omnivores,Decomposition by BG Omnivores
+Soil.Microorganisms_BG.Omnivores,flow,BG,Predation,NA,NA,Soil.Microorganisms,BG.Omnivores,Predation of soil microorganisms by BG Omnivores
+Plants_SOM,flow,BG,Detritus_production,NA,NA,Plants,SOM,Plant root mortality
+BG.Carnivores_SOM,flow,BG,Detritus_production,NA,NA,BG.Carnivores,SOM,Excretion and natural mortality of 
+BG.Herbivores_SOM,flow,BG,Detritus_production,NA,NA,BG.Herbivores,SOM,Excretion and natural mortality of BG Herbivores
+BG.Decomposers_SOM,flow,BG,Detritus_production,NA,NA,BG.Decomposers,SOM,Excretion and natural mortality of BG Decomposers
+BG.Omnivores_SOM,flow,BG,Detritus_production,NA,NA,BG.Omnivores,SOM,Excretion and natural mortality of BG Omnivores
+AG.Litter_SOM,flow,BG,Detritus_production,NA,NA,AG.Litter,SOM,Fauna burial activity (mechanical transfer and transformation of aboveground into belowground subnetwork)
+Soil.Microorganisms_SOM,flow,BG,Detritus_production,NA,NA,Soil.Microorganisms,SOM,Excretion and natural mortality of soil microorganisms
+Plants_AG.Litter,flow,AG,Detritus_production,NA,NA,Plants,AG.Litter,Plant aboveground mortality
+AG.Herbivores_AG.Litter,flow,AG,Detritus_production,NA,NA,AG.Herbivores,AG.Litter,Excretion and natural mortality of AG Herbivores
+AG.Carnivores_AG.Litter,flow,AG,Detritus_production,NA,NA,AG.Carnivores,AG.Litter,Excretion and natural mortality of AG Carnivores
+AG.Omnivores_AG.Litter,flow,AG,Detritus_production,NA,NA,AG.Omnivores,AG.Litter,Excretion and natural mortality of AG Omnivores
+AG.Decomposers_AG.Litter,flow,AG,Detritus_production,NA,NA,AG.Decomposers,AG.Litter,Excretion and natural mortality of AG Decomposers
+SOM_Soil.Microorganisms,flow,BG,Decomposition,NA,NA,SOM,Soil.Microorganisms,Decomposition by soil microorganisms
+Plants_o,flow,AG_BG,Respiration,NA,NA,Plants,NA,Respiration of Plants
+AG.Herbivores_o,flow,AG,Respiration,NA,NA,AG.Herbivores,NA,Respiration of AG Herbivores
+AG.Carnivores_o,flow,AG,Respiration,NA,NA,AG.Carnivores,NA,Respiration of AG Carnivores
+AG.Omnivores_o,flow,AG,Respiration,NA,NA,AG.Omnivores,NA,Respiration of AG Omnivores
+AG.Decomposers_o,flow,AG,Respiration,NA,NA,AG.Decomposers,NA,Respiration of AG Decomposers
+BG.Carnivores_o,flow,BG,Respiration,NA,NA,BG.Carnivores,NA,Respiration of BG Carnivores
+BG.Herbivores_o,flow,BG,Respiration,NA,NA,BG.Herbivores,NA,Respiration of BG Herbivores
+BG.Decomposers_o,flow,BG,Respiration,NA,NA,BG.Decomposers,NA,Respiration of BG Decomposers
+BG.Omnivores_o,flow,BG,Respiration,NA,NA,BG.Omnivores,NA,Respiration of BG Omnivores
+Soil.Microorganisms_o,flow,BG,Respiration,NA,NA,Soil.Microorganisms,NA,Respiration of soil microorganisms
+Plants.Stock,stock,AG_BG,NA,Plants,1,Plants,Plants,Biomass stock of Plants
+AG.Herbivores.Stock,stock,AG,NA,Herbivores,2,AG.Herbivores,AG.Herbivores,Biomass stock of AG Herbivores
+AG.Carnivores.Stock,stock,AG,NA,Carnivores,3,AG.Carnivores,AG.Carnivores,Biomass stock of AG Carnivores
+AG.Omnivores.Stock,stock,AG,NA,Omnivores,3,AG.Omnivores,AG.Omnivores,Biomass stock of AG Omnivores
+AG.Decomposers.Stock,stock,AG,NA,Decomposers,2,AG.Decomposers,AG.Decomposers,Biomass stock of AG Decomposers
+BG.Herbivores.Stock,stock,BG,NA,Herbivores,2,BG.Herbivores,BG.Herbivores,Biomass stock of BG Herbivores
+BG.Carnivores.Stock,stock,BG,NA,Carnivores,3,BG.Carnivores,BG.Carnivores,Biomass stock of BG Carnivores
+BG.Omnivores.Stock,stock,BG,NA,Omnivores,3,BG.Omnivores,BG.Omnivores,Biomass stock of BG Omnivores
+BG.Decomposers.Stock,stock,BG,NA,Decomposers,2,BG.Decomposers,BG.Decomposers,Biomass stock of BG Decomposers
+Soil.Microorganisms.Stock,stock,BG,NA,Decomposers,2,Soil.Microorganisms,Soil.Microorganisms,Biomass stock of soil microorganisms
+AG.Litter.Stock,stock,AG,NA,Detritus,1,AG.Litter,AG.Litter,Standing stock of AG litter
+SOM.Stock,stock,BG,NA,Detritus,1,SOM,SOM,Standing stock of soil organic carbon
