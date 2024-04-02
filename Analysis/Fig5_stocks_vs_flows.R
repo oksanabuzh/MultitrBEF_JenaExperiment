@@ -1,11 +1,17 @@
-# D the plant diversity effects on EFs depend on the dimension of EFs 
-# (whether it is measured as flux or stock)?
+# Produce Fig. 5
+#
+# Comparison of plant diversity effects on stocks and flows for each trophic group 
+# across aboveground and belowground subnetworks and given different 
+# ecosystem functions represented by the energy flows and depending 
+# on flow types (inflow vs outflow).
+#
 
 # ----------------------------------------------------#
 
 rm(list=ls(all=TRUE))
 dev.off()
-# Packages
+
+# Packages ----
 library(tidyverse)
 library(patchwork)
 
@@ -51,6 +57,8 @@ stock_dat <- df_all %>%
 
 stock_dat
 
+
+# Data wrangling for plotting ----
 
 dat<- flux_dat %>% 
   left_join(stock_dat, by= c("predictor", "stock_group")) %>% 
