@@ -6,16 +6,16 @@
 # on flow types (inflow vs outflow).
 #
 
-# ----------------------------------------------------#
+# -------------------------------------------------------------------------------#
 
 rm(list=ls(all=TRUE))
 dev.off()
 
-# Packages ----
+# Packages ---------------------------------------------------------------------
 library(tidyverse)
 library(patchwork)
 
-# Data ----
+# Data -------------------------------------------------------------------------
 df_main <- read_csv("Results/mod_main_text.csv")
 str(df_main)
 
@@ -58,7 +58,7 @@ stock_dat <- df_all %>%
 stock_dat
 
 
-# Data wrangling for plotting ----
+# Data wrangling for plotting -------------------------------------------------
 
 dat<- flux_dat %>% 
   left_join(stock_dat, by= c("predictor", "stock_group")) %>% 
@@ -130,7 +130,7 @@ dat <- dat %>% mutate(dummy_AG_BG = case_when(stock_group=="AG.Herbivores" ~ "AG
 dat %>% pull(dummy_AG_BG) %>% unique()
 
 
-# Plots ----
+# Plots -----------------------------------------------------------------------
 
 myPalette <- c("#32CD32", "#8B4513", "#46220A", "#008B8B", "#D2691E", "#EDAE83","#EE82EE", "#C71585")
 
@@ -143,7 +143,7 @@ MyShape=c(13, 21, 22,  24, 23)
 dat %>% pull(predictor) %>%  unique()
 
 
-## facet_wrap( ~ AG_BG) ------
+## facet_wrap( ~ AG_BG) ------------------------------------------------------
 
 SR_effects <- dat %>% 
   filter(predictor=="sowndiv") %>% 
@@ -277,9 +277,7 @@ sh.ef_effects + th.ef_effects +
 
 
 
-
-
-## facet_wrap( ~ in_out_flux) ------
+## facet_wrap( ~ in_out_flux) -------------------------------------------------
 
 
 
