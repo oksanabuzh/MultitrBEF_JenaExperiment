@@ -1,0 +1,13 @@
+Responce,F value,Pr(>F)
+sowndiv_AG,0.22,0.64
+sowndiv_BG,28.91,<0.001
+numfg_AG,6.59,0.02
+numfg_BG,3.57,0.07
+leg.ef_AG,0.96,0.33
+leg.ef_BG,0.03,0.87
+gr.ef_AG,3.31,0.08
+gr.ef_BG,8.45,0.01
+sh.ef_AG,0.60,0.44
+sh.ef_BG,<0.001,0.95
+th.ef_AG,<0.001,0.98
+th.ef_BG,1.16,0.29

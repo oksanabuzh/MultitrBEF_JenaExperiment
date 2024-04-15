@@ -14,6 +14,7 @@ dev.off()
 # Packages ---------------------------------------------------------------------
 library(tidyverse)
 library(patchwork)
+library(sjPlot)
 
 # (1) Single figure for each biodiversity facet  -------------------------------
 
@@ -114,10 +115,100 @@ factor(dat$stock_group_general)
 dat%>% pull(AG_BG_stock) %>% unique()
 
 
+# Table S3 -----
 
-## Plot----
+run_mod <- dat %>% 
+  group_by(predictor, AG_BG_stock) %>% 
+  nest() %>% 
+  mutate(fit_lm = map(data, ~ lm(flow_effect ~ stock_effect, data =.))) %>% 
+  mutate(predictor = paste(predictor, AG_BG_stock, sep = "_"))
+
+Model_fits <- run_mod %>% 
+  group_by(predictor) %>% 
+  do(anova = stats::anova(.$fit_lm[[1]]))%>% 
+  pull(anova, predictor) 
+
+names(anova(m_SR_AG))
+
+fits <- Map(cbind, Model_fits, Responce = names(Model_fits))
+
+TableS3 <- reduce(map(fits, ~ as_tibble(.x, rownames = "output")),
+       full_join, by = c("output", "Df", "Sum Sq", "Mean Sq", "F value", 
+                         "Pr(>F)", "Responce")) %>% 
+  filter(!output=="Residuals")%>%
+  relocate(Responce) %>% select(Responce, `F value`, `Pr(>F)`)  
+
+TableS3 
+
+write_csv(TableS3, "results/Table_S3.csv")
+
+
+# check the assumptions for the models
+
+m_SR_AG <- lm(flow_effect ~ stock_effect, dat %>% 
+             filter(predictor=="sowndiv" & AG_BG_stock=="AG"))
+
+par(mfrow = c(2, 2))
+plot(m_SR_AG)
+anova(m_SR_AG)
+
+m_SR_BG <- lm(flow_effect ~ stock_effect, dat %>% 
+                filter(predictor=="sowndiv" & AG_BG_stock=="BG"))
+plot(m_SR_BG)
+anova(m_SR_BG)
+
+m_numfg_AG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="numfg" & AG_BG_stock=="AG"))
+plot(m_numfg_AG)
+anova(m_numfg_AG)
+
+m_numfg_BG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="numfg"& AG_BG_stock=="BG"))
+plot(m_numfg_BG)
+anova(m_numfg_BG)
+
+m_leg.ef_AG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="leg.ef" & AG_BG_stock=="AG"))
+plot(m_leg.ef_AG)
+anova(m_leg.ef_AG)
+
+m_leg.ef_BG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="leg.ef"& AG_BG_stock=="BG"))
+plot(m_leg.ef_BG)
+anova(m_leg.ef_BG)
+
+
+m_gr.ef_AG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="gr.ef" & AG_BG_stock=="AG"))
+plot(m_gr.ef_AG)
+anova(m_gr.ef_AG)
+
+m_gr.ef_BG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="gr.ef"& AG_BG_stock=="BG"))
+plot(m_gr.ef_BG)
+anova(m_gr.ef_BG)
+
+m_sh.ef_AG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="sh.ef" & AG_BG_stock=="AG"))
+plot(m_sh.ef_AG)
+anova(m_sh.ef_AG)
+
+m_sh.ef_BG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="sh.ef"& AG_BG_stock=="BG"))
+plot(m_sh.ef_BG)
+anova(m_sh.ef_BG)
+
+m_th.ef_AG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="th.ef" & AG_BG_stock=="AG"))
+plot(m_th.ef_AG)
+anova(m_th.ef_AG)
+
+m_th.ef_BG <- lm(flow_effect ~ stock_effect, dat %>% filter(predictor=="th.ef"& AG_BG_stock=="BG"))
+plot(m_th.ef_BG)
+anova(m_th.ef_BG)
+
+
+
+# Figure S5  ----
 
 MyShape2=c(21, 19)
+
+myPalette <- c("#32CD32", "#8B4513", "#46220A", "#008B8B", "#D2691E", "#EDAE83","#EE82EE", "#C71585")
+
+myPalette_with_white <- c("#32CD32", "#8B4513", "#46220A", "#008B8B", "#D2691E", "#EDAE83","#EE82EE",
+                          "#C71585", "white")
+
 
 SR_effects <- dat %>% 
   filter(predictor=="sowndiv") %>% 
@@ -125,33 +216,35 @@ SR_effects <- dat %>%
              color = stock_group_general, 
              # fill=dummy_fill, 
              shape=AG_BG_stock)) +
-  geom_point(size=2, stroke=1.1 ) +
-  scale_shape_manual(values=MyShape2) +
+   scale_shape_manual(values=MyShape2) +
   scale_color_manual(values=myPalette)+
+#  scale_linetype_manual(values=c("solid", "dashed"))+
+  
   # scale_fill_manual(values=myPalette_with_white)+
-  geom_abline(intercept = 0, slope = 1) +
-  # facet_wrap( ~  in_out_flux, scales = "free") +
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
   theme_bw() +  # guides(fill = "none") +
   labs(x="Effects on stocks", y= "Effects on flows", title="Species richness",
-       shape="AG/BG subnetwork", col="Trophic group")
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG") 
+
 
 SR_effects
-
 
 numfg_effects <- dat %>% 
   filter(predictor=="numfg") %>% 
   ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
              #   fill=dummy_fill, 
              shape=AG_BG_stock)) +
-  geom_point(size=2, stroke=1.1 ) +
   scale_shape_manual(values=MyShape2) +
   scale_color_manual(values=myPalette)+
   #  scale_fill_manual(values=myPalette_with_white)+
-  geom_abline(intercept = 0, slope = 1) +
-  #  facet_wrap( ~ in_out_flux, scales = "free") +
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
   theme_bw() +   
   labs(x="Effects on stocks", y= "Effects on flows", title="FG richness",
-       shape="AG/BG subnetwork", col="Trophic group")
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
 
 
 numfg_effects
@@ -162,15 +255,14 @@ leg.ef_effects <- dat %>%
   ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
              #   fill=dummy_fill, 
              shape=AG_BG_stock)) +
-  geom_point(size=2, stroke=1.1) +
   scale_shape_manual(values=MyShape2) +
   scale_color_manual(values=myPalette)+
-  # scale_fill_manual(values=myPalette_with_white)+
-  geom_abline(intercept = 0, slope = 1) +
-  # facet_wrap( ~  in_out_flux , scales = "free") +
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
   theme_bw() +   
   labs(x="Effects on stocks", y= "Effects on flows", title="Legumes",
-       shape="AG/BG subnetwork", col="Trophic group")
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
 
 
 
@@ -182,15 +274,15 @@ gr.ef_effects <- dat %>%
   ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
              #  fill=dummy_fill, 
              shape=AG_BG_stock)) +
-  geom_point(size=2, stroke=1.1 ) +
   scale_shape_manual(values=MyShape2) +
   scale_color_manual(values=myPalette)+
   # scale_fill_manual(values=myPalette_with_white)+
-  geom_abline(intercept = 0, slope = 1) +
-  #  facet_wrap( ~  in_out_flux , scales = "free") +
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
   theme_bw() +   
   labs(x="Effects on stocks", y= "Effects on flows", title="Grasses",
-       shape="AG/BG subnetwork", col="Trophic group")
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
 
 
 gr.ef_effects
@@ -202,15 +294,15 @@ sh.ef_effects <- dat %>%
   ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
              #  fill=dummy_fill, 
              shape=AG_BG_stock)) +
-  geom_point(size=2, stroke=1.1 ) +
   scale_shape_manual(values=MyShape2) +
   scale_color_manual(values=myPalette)+
   # scale_fill_manual(values=myPalette_with_white)+
-  geom_abline(intercept = 0, slope = 1) +
-  # facet_wrap( ~  in_out_flux , scales = "free") +
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
   theme_bw() +   
   labs(x="Effects on stocks", y= "Effects on flows", title="Small herbs",
-       shape="AG/BG subnetwork", col="Trophic group")
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
 
 
 sh.ef_effects
@@ -222,15 +314,14 @@ th.ef_effects <- dat %>%
   ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
              #  fill=dummy_fill, 
              shape=AG_BG_stock)) +
-  geom_point(size=2, stroke=1.1) +
   scale_shape_manual(values=MyShape2) +
   scale_color_manual(values=myPalette)+
-  #  scale_fill_manual(values=myPalette_with_white)+
-  geom_abline(intercept = 0, slope = 1) +
-  #  facet_wrap( ~  in_out_flux , scales = "free") +
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
   theme_bw() +   
   labs(x="Effects on stocks", y= "Effects on flows", title="Tall herbs",
-       shape="AG/BG subnetwork", col="Trophic group")
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
 
 
 th.ef_effects
