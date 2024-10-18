@@ -10,6 +10,18 @@ source("Analysis/run_model_all_variables.R")
 Index <- readr::read_csv("Data/net_ind_fluxes.csv")
 str(Index)
 
+# Read functional diversity indices
+fun_div <- read_csv("Results/functional_diversity.csv")
+
+# join both tables by Plot ID
+Index <- Index %>% 
+  left_join(fun_div, by = c("plotcode" = "plot")
+  ) |> 
+  relocate(
+    all_of(c("RaoQ", "FDis", "sum_bl")),
+    .before = sowndiv 
+  )
+
 # Meaning of column names
 names(Index) 
 # "_" is flow
@@ -26,8 +38,8 @@ names(Index)
 
 # create a table with all models to be calculated
 all_models <- expand.grid(
-  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef"),
-  y = names(Index[14:66])
+  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "RaoQ", "FDis", "sum_bl"),
+  y = names(Index)[17:69]
 )
 
 # Analysis main text ------------------------------------------------------

@@ -1,10 +1,7 @@
 # Extract effect sizes for standing biomass stocks of root and shoot separately
 # to be used in Fig. 5 and metaanalysys for AG vs BG effects
 
-rm(list=ls(all=TRUE))
-
 # Packages
-
 library(tidyverse)
 library(glue)
 # load function to calculate models
@@ -13,6 +10,18 @@ source("Analysis/run_model_all_variables.R")
 # Prepare the data --------------------------------------------------------
 Index <- readr::read_csv("Data/Shoot_Root_separately/Stocks_Shoot_Root.csv")
 str(Index)
+
+# Read functional diversity indices
+fun_div <- read_csv("Results/functional_diversity.csv")
+
+# join both tables by Plot ID
+Index <- Index %>% 
+  left_join(fun_div, by = c("plotcode" = "plot")
+  ) |> 
+  relocate(
+    all_of(c("RaoQ", "FDis", "sum_bl")),
+    .before = sowndiv 
+  )
 
 # Meaning of column names
 names(Index) 
@@ -27,8 +36,8 @@ names(Index)
 
 # create a table with all models to be calculated
 all_models <- expand.grid(
-  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef"),
-  y = names(Index[14:15])
+  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "RaoQ", "FDis", "sum_bl"),
+  y = names(Index[17:18])
 )
 
 # Analysis main text ------------------------------------------------------
