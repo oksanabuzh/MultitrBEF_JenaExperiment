@@ -140,7 +140,11 @@ bl_results <- tibble(
 
 # Combine all fd results and make correlation ------------------------------
 all_fun_div <- left_join(fun_div_results, bl_results, by = "plot") |> 
-  select(-qual.FRic)
+  select(-qual.FRic) |> 
+  select(plot, RaoQ, FDis, sum_bl)
+
+# Save the results
+write_csv(all_fun_div, "Results/functional_diversity.csv")
 
 # Check correlations
 all_fun_div |> 
