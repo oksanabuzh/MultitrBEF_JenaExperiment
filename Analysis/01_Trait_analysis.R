@@ -1,7 +1,7 @@
 # Purpose: prepare traits and community matrix and calculate functional diversity
 
 library(tidyverse)
-library(picante)
+
 
 # Read data
 traits <- read_csv("Data/traits_st_PlasFons.van.der_NatEcol_Evol_2020.csv")
@@ -59,36 +59,93 @@ community_matrix <- community_matrix[, -which(colnames(community_matrix) %in% sp
 fun_div <- FD::dbFD(trait_matrix, community_matrix,
   calc.CWM = FALSE
 )
-fun_div <- as_tibble(fun_div)
-
+fun_div_results <- as_tibble(fun_div)
+fun_div_results$plot <- names(fun_div$FDis)
 # Calculate sum of branchlengths of dendrogram -----------------------------
 # Calculated equivalent to the SumBL function from the cati r package
 
-# Example using all traits and species
-tree.dis <- FD::gowdis(trait_matrix)
-picante::mpd(community_matrix, tree.dist, abundance.weighted = TRUE)
-tree.dist <- na.omit(tree.dist)
-tree <- hclust(tree.dist, method = "average")
-res <- treeheight(tree)
+# Extract the species present in the community for each plot separately
+community_p_a <- community_matrix |>
+  as_tibble(rownames = "Plot") |>
+  pivot_longer(cols = -Plot, names_to = "sp", values_to = "cover") |>
+  filter(cover > 0) |>
+  # split into list by plot id and add plot as a name in the list
+  group_by(Plot) |>
+  group_split() |>
+  map(~ .x |> pivot_wider(names_from = sp, values_from = cover))
 
-picante::pd(tree)
+# Give the list elements names according to the plot id
+names(community_p_a) <- community_p_a |>
+  map_chr(~ .x$Plot[1])
 
-library(cati)
-data(finch.ind)
-SumBL(traits.finch)
 
-# Define a function
-community <- community_matrix[1, ] |> as.vetor()
-sum_branch_lengths <- function(trait_matrix, community) {
-  # Calculate trait-trait distance matrix using cover as weights
-  tree_dist_weighted <- FD::gowdis(as.data.frame(trait_matrix), community) # to do: Add weights based on community
+# create a trait matrix separately for each plot
+create_trait_matrix <- function(plot_community, all_traits) {
+  # extract species names (all column names excepte the first which is Plot)
+  species <- names(plot_community)[-1]
+  trait_subset <- all_traits[species, ]
+  return(trait_subset)
 }
 
-# Check correlation between indices -------------------------------------------------
-fun_div |>
-  dplyr::select(-qual.FRic) |>
-  view()
-cor() |>
+# Run function over the community list to get a list of trait matrices
+trait_matrix_list <- community_p_a |>
+  map(create_trait_matrix, all_traits = trait_matrix)
+
+# Function to calculate the sum of branch lengths
+trait_matrix <- trait_matrix_list[[1]]
+sum_bl <- function(trait_matrix) {
+  # if we only have one species, trait_matrix will be a vectors and we return 0
+  if (!is.matrix(trait_matrix)) {
+    return(0)
+  } else {
+    tryCatch(
+      {
+        # If there are traits that have the exact same value for all species
+        # remove this trait. This will not affect the results but otherwise
+        # we would get NaN for the distance because we divide by 0
+        # find all columns where all values are exactly the same
+        same_values <- apply(trait_matrix, 2, function(x) length(unique(x)) == 1) |> which()
+        # remove these columns
+        if(length(same_values) > 0) {
+          print(paste("Removed columns:", same_values))
+        trait_matrix <- trait_matrix[,-same_values]
+        }
+        
+        dist <- FD::gowdis(trait_matrix)
+        dist <- na.omit(dist)
+        tree <- hclust(dist, method = "average")
+        res <- treeheight(tree)
+        return(res)
+      },
+      error = function(e) {
+        print(e$message)
+        print(trait_matrix)
+        return(NA)
+      }
+    )
+  }
+}
+
+
+bl_results <- trait_matrix_list |> 
+  # apply function sum_bl to each element and save result as a tibble
+  map_dbl(sum_bl)
+  # convert to tibble with vector names in a column
+
+# Convert into a table
+bl_results <- tibble(
+  sum_bl = bl_results,
+  plot = names(bl_results)
+)
+
+# Combine all fd results and make correlation ------------------------------
+all_fun_div <- left_join(fun_div_results, bl_results, by = "plot") |> 
+  select(-qual.FRic)
+
+# Check correlations
+all_fun_div |> 
+  select(RaoQ, sum_bl, FDis) |>
+  cor() |> 
   ggcorrplot::ggcorrplot(
     lab = TRUE
   )
