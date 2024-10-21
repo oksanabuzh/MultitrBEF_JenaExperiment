@@ -24,8 +24,11 @@ run_model_all_vars <- function(dat, first, y, type,
 
   # Remove numfg from predictors if the first is not numfg
   # numfg is correlated with the other predictors
-  if (first %in% c("numfg", "RaoQ", "FDis", "FDbranch")) {
+  if (first %in% c("numfg", "RaoQ", "FDis")) {
     all_vars <- "log2(sowndiv)"
+  } else if (first == "FDbranch") {
+    # FD branch is fitted alone in the model (with block)
+    all_vars <- c()
   } else if (first == "sowndiv") {
     first <- "log2(sowndiv)"
     all_vars <- all_vars[!(all_vars == "numfg")]
@@ -35,10 +38,16 @@ run_model_all_vars <- function(dat, first, y, type,
   }
 
   # step 1: create the model formula as text --------------------------------
-  model_formula <- paste0(
-    y, " ~ block + ", first, " + ",
-    paste0(all_vars, collapse = " + ")
-  )
+  if (first == "FDbranch") {
+    model_formula <- paste0(
+      y, " ~ block + ", first
+    )
+  } else {
+    model_formula <- paste0(
+      y, " ~ block + ", first, " + ",
+      paste0(all_vars, collapse = " + ")
+    )
+  }
   # step 2: Do boxcox transformation if you want (by default it's do --------
   if (boxcox) {
     bc <- MASS::boxcox(as.formula(model_formula), data = dat, plotit = FALSE)
@@ -82,16 +91,16 @@ run_model_all_vars <- function(dat, first, y, type,
                 1 for anova or 2 vor car::Anova, but value is ", type, " instead."))
   }
 
-  # Extract F value 
-  Fval <- filter(pval, variable == first) %>% 
+  # Extract F value
+  Fval <- filter(pval, variable == first) %>%
     pull(`F value`)
- 
-   # Extract p value
+
+  # Extract p value
   pval <- filter(pval, variable == first) %>%
     pull(`Pr(>F)`)
 
- 
-  
+
+
   # Extract model results ---------------------------------------------------
 
   # estimates
@@ -153,7 +162,7 @@ run_model_all_vars <- function(dat, first, y, type,
   effect_size_st <- effect_size * (sd_values %>% pull(first) / sd_values %>% pull(y))
 
 
-  
+
   # Combine and return results ----------------------------------------------
 
   result <- list(
@@ -171,4 +180,3 @@ run_model_all_vars <- function(dat, first, y, type,
   )
   return(result)
 }
-
