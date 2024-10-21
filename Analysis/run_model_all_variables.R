@@ -24,7 +24,7 @@ run_model_all_vars <- function(dat, first, y, type,
 
   # Remove numfg from predictors if the first is not numfg
   # numfg is correlated with the other predictors
-  if (first %in% c("numfg", "RaoQ", "FDis", "sum_bl")) {
+  if (first %in% c("numfg", "RaoQ", "FDis", "FDbranch")) {
     all_vars <- "log2(sowndiv)"
   } else if (first == "sowndiv") {
     first <- "log2(sowndiv)"

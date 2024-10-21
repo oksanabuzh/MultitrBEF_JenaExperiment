@@ -18,7 +18,7 @@ Index <- Index %>%
   left_join(fun_div, by = c("plotcode" = "plot")
   ) |> 
   relocate(
-    all_of(c("RaoQ", "FDis", "sum_bl")),
+    all_of(c("RaoQ", "FDis", "FDbranch")),
     .before = sowndiv 
   )
 
@@ -38,7 +38,7 @@ names(Index)
 
 # create a table with all models to be calculated
 all_models <- expand.grid(
-  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "RaoQ", "FDis", "sum_bl"),
+  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "RaoQ", "FDis", "FDbranch"),
   y = names(Index)[17:69]
 )
 
