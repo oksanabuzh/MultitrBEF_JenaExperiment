@@ -1,16 +1,18 @@
-# Fig 3 barplots for the design variables of the Jena Experiment
+# Fig 5 c-d barplots for tarit-based FD measures
 
 library(tidyverse)
 library(ggtext)
 
 # Prepare data ------------------------------------------------------------
+
 # Percentages of significant effects
 # calculate percentages of significant effects
 # Data
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
+# df_main <- read_csv("Results/mod_supp.csv") %>% 
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
-                           .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+                             .default=predictor)) %>% 
+  filter(predictor %in% c("FDis", "FDbranch"))
 
 str(df_main)
 
@@ -35,9 +37,7 @@ count <- dat_perc %>%
 count
 
 summarised <- count %>% 
-  mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
-                                            "leg.ef", "gr.ef",
-                                            "sh.ef", "th.ef"))) %>% 
+  mutate(predictor=fct_relevel(predictor, c("FDis", "FDbranch"))) %>% 
   pivot_wider(names_from = "AG_BG", values_from = "n") %>%
   mutate(AG = ifelse(is.na(AG), 0, AG),     
          AG_BG = ifelse(is.na(AG_BG), 0, AG_BG),
@@ -51,11 +51,6 @@ summarised <- count %>%
 
 summarised
 
-
-# write_csv (summarised, "Results/Summary_Effects_MainText.csv")
-
-
-# Read data ------
 
 dat <- summarised %>%
   mutate(Dimens = case_when(
@@ -71,7 +66,7 @@ dat <- summarised %>%
   )) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("FDis", "FDbranch")
     )
   )
 
@@ -80,12 +75,9 @@ dat <- summarised %>%
 # Modify factor labels
 
 predictor_label <- c(
-  gr.ef = "Presence of grasses",
-  leg.ef = "Presence of legumes",
-  numfg = "Functional group richness",
-  sh.ef = "Presence of small herbs",
-  sowndiv = "Species richness",
-  th.ef = "Presence of tall herbs")
+  FDis = "Functional dispersion, FDis",
+  FDbranch ="Dendrogram branch length, FDbranch"
+)
 
 # Make plot ---------------------------------------------------------------
 
@@ -124,10 +116,3 @@ barplot_effects <- dat %>%
   )
 
 barplot_effects
-
-# Save plot ---------------------------------------------------------------
-
-ggsave("Results/Fig.3.png",
-  width = 16, height = 8, units = "cm",
-  scale = 1.3
-)

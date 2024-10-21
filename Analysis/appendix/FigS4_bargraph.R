@@ -1,13 +1,64 @@
-# Fig 3 plots
+# Fig 3 barplots for the design variables of the Jena Experiment
 
 library(tidyverse)
 library(ggtext)
 
 # Prepare data ------------------------------------------------------------
+# Percentages of significant effects
+# calculate percentages of significant effects
+# Data
 
-dat <- read_csv("Results/Summary_Effects_MainText.csv")
+df_main <- read_csv("Results/mod_supp.csv") %>% 
+mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
+                           .default=predictor)) %>% 
+  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
 
-dat <- dat %>%
+str(df_main)
+
+group <- read_csv ("Data/EF_grouped.csv")
+names(group)
+
+dat_perc <- merge(df_main, group)
+dat_perc
+str(dat_perc)
+
+
+# Create new columns needed for the further analysis
+dat_perc <- dat_perc %>% 
+  mutate(Signif=case_when(p < 0.050 ~ "Signif", p >= 0.050 ~ "Non-sign")) %>% # create column with significant vs non-significant effects
+  mutate(Eff_sighn=case_when(effect_size_st < 0 ~ "negative", p >= 0 ~ "positive")) # create column with direction of effect (positive vs negative)
+
+
+count <- dat_perc %>% 
+  count(predictor, Dimens, AG_BG, Signif, Eff_sighn) %>% 
+  add_count(predictor, Dimens, wt=sum(n), name = "sum") %>% 
+  filter(Signif=="Signif")
+count
+
+summarised <- count %>% 
+  mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
+                                            "leg.ef", "gr.ef",
+                                            "sh.ef", "th.ef"))) %>% 
+  pivot_wider(names_from = "AG_BG", values_from = "n") %>%
+  mutate(AG = ifelse(is.na(AG), 0, AG),     
+         AG_BG = ifelse(is.na(AG_BG), 0, AG_BG),
+         BG = ifelse(is.na(BG ), 0, BG )) %>% 
+  mutate(Total=AG+AG_BG+BG) %>% 
+  mutate(AG_pr=round(AG*100/sum, digits = 2)) %>% 
+  mutate(BG_pr=round(BG*100/sum, digits = 2)) %>% 
+  mutate(Total_pr=round(Total*100/sum, digits = 2)) %>% 
+  select(-Signif ) %>% 
+  arrange(predictor, Dimens)
+
+summarised
+
+
+# write_csv (summarised, "Results/Summary_Effects_MainText.csv")
+
+
+# Read data ------
+
+dat <- summarised %>%
   mutate(Dimens = case_when(
     Dimens == "flow" ~ "Flows",
     Dimens == "stock" ~ "Stocks"
@@ -32,11 +83,10 @@ dat <- dat %>%
 predictor_label <- c(
   gr.ef = "Presence of grasses",
   leg.ef = "Presence of legumes",
-  numfg = "Functional richness",
+  numfg = "Functional group richness",
   sh.ef = "Presence of small herbs",
   sowndiv = "Species richness",
-  th.ef = "Presence of tall herbs"
-)
+  th.ef = "Presence of tall herbs")
 
 # Make plot ---------------------------------------------------------------
 
@@ -74,9 +124,4 @@ barplot_effects <- dat %>%
     strip.text = element_text(hjust = 0, face = "bold")
   )
 
-# Save plot ---------------------------------------------------------------
-
-ggsave("Results/Fig.3.png",
-  width = 16, height = 8, units = "cm",
-  scale = 1.3
-)
+barplot_effects

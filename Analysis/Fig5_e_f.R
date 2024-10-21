@@ -1,4 +1,4 @@
-# Fig 4 plots
+# Fig 5 e-f 
 # flows grouped by ecosystem functions, and AG vs BG
 # stocks grouped by trophic groups, trophic levels and AG vs BG.
 
@@ -10,12 +10,12 @@ library(patchwork)
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                              .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+  filter(predictor %in% c("FDis", "RaoQ", "FDbranch"))
 
 df_rootShoot <- read_csv("Results/mod_ShootRoot.csv")%>% # roots and shoots separately
 mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                            .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+  filter(predictor %in% c("FDis", "RaoQ", "FDbranch"))
 
 
 group <- read_csv("Data/EF_grouped.csv")
@@ -56,7 +56,7 @@ df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("FDis", "RaoQ", "FDbranch")
     ),
     Ecos_Function = case_match(Ecos_Function,
       "Carbon_uptake" ~ "Carbon uptake",
@@ -125,7 +125,7 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
   left_join(df_colors_stocks, by = c("group_value", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("FDis", "RaoQ", "FDbranch")
     )
   ) %>%
   mutate(group_value = factor(group_value, levels = c(
@@ -140,30 +140,21 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
 
 # create nice facet labels
 predictor_label <- c(
-  gr.ef = "Presence of grasses",
-  leg.ef = "Presence of legumes",
-  numfg = "Functional richness",
-  sh.ef = "Presence of small herbs",
-  sowndiv = "Species richness",
-  th.ef = "Presence of tall herbs"
+  FDis = "FDis",
+  RaoQ = "RaoQ",
+  FDbranch ="FDbranch"
 )
 
 predictor_label_flows <- c(
-  gr.ef = "d",
-  leg.ef = "c",
-  numfg = "b",
-  sowndiv = "a",
-  sh.ef = "e",
-  th.ef = "f"
+  FDis = "e",
+  RaoQ = "f",
+  FDbranch = "j"
 )
 
 predictor_label_stocks <- c(
-  gr.ef = "j",
-  leg.ef = "i",
-  numfg = "h",
-  sh.ef = "k",
-  sowndiv = "g",
-  th.ef = "l"
+  FDis = "e",
+  RaoQ = "f",
+  FDbranch = "j"
 )
 
 # Format x-axis so that 0 is printed as 0 and not as 0.00
