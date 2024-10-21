@@ -92,10 +92,10 @@ trait_matrix_list <- community_p_a |>
   map(create_trait_matrix, all_traits = trait_matrix)
 
 # Function to calculate the sum of branch lengths
-trait_matrix <- trait_matrix_list[[1]]
+trait_matrix <- trait_matrix_list[[6]]
 sum_bl <- function(trait_matrix) {
-  # if we only have one species, trait_matrix will be a vectors and we return 0
   if (!is.matrix(trait_matrix)) {
+    # if we only have one species, trait_matrix will be a vectors and we return 0
     return(0)
   } else {
     tryCatch(
@@ -106,15 +106,18 @@ sum_bl <- function(trait_matrix) {
         # find all columns where all values are exactly the same
         same_values <- apply(trait_matrix, 2, function(x) length(unique(x)) == 1) |> which()
         # remove these columns
-        if(length(same_values) > 0) {
+        if (length(same_values) > 0) {
           print(paste("Removed columns:", same_values))
-        trait_matrix <- trait_matrix[,-same_values]
+          trait_matrix <- trait_matrix[, -same_values]
         }
-        
+
         dist <- FD::gowdis(trait_matrix)
+        # add the number of combinations that were removed (is zero if not
+        # traits are removed)
+        dist <- dist + length(same_values)
         dist <- na.omit(dist)
         tree <- hclust(dist, method = "average")
-        res <- treeheight(tree)
+        res <- vegan::treeheight(tree)
         return(res)
       },
       error = function(e) {
@@ -127,29 +130,29 @@ sum_bl <- function(trait_matrix) {
 }
 
 
-bl_results <- trait_matrix_list |> 
+bl_results <- trait_matrix_list |>
   # apply function sum_bl to each element and save result as a tibble
   map_dbl(sum_bl)
-  # convert to tibble with vector names in a column
+# convert to tibble with vector names in a column
 
 # Convert into a table
 bl_results <- tibble(
-  sum_bl = bl_results,
+  FDbranch = bl_results,
   plot = names(bl_results)
 )
 
 # Combine all fd results and make correlation ------------------------------
-all_fun_div <- left_join(fun_div_results, bl_results, by = "plot") |> 
-  select(-qual.FRic) |> 
-  select(plot, RaoQ, FDis, sum_bl)
+all_fun_div <- left_join(fun_div_results, bl_results, by = "plot") |>
+  select(-qual.FRic) |>
+  select(plot, RaoQ, FDis, FDbranch)
 
 # Save the results
 write_csv(all_fun_div, "Results/functional_diversity.csv")
 
 # Check correlations
-all_fun_div |> 
-  select(RaoQ, sum_bl, FDis) |>
-  cor() |> 
+all_fun_div |>
+  select(RaoQ, FDbranch, FDis) |>
+  cor() |>
   ggcorrplot::ggcorrplot(
     lab = TRUE
   )
