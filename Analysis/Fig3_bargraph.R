@@ -1,5 +1,6 @@
 # Fig 3 barplots for the design variables of the Jena Experiment
 
+
 library(tidyverse)
 library(ggtext)
 
@@ -8,9 +9,7 @@ library(ggtext)
 # calculate percentages of significant effects
 # Data
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
-  mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
-                           .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+   filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
 
 str(df_main)
 
@@ -99,12 +98,13 @@ barplot_effects <- dat %>%
   scale_y_continuous(
     breaks = seq(-10, 50, by = 10),
     limits = c(-10, 51),
-    expand = c(0, 0)
+    expand = c(0, 0),
+    labels=c("10", "0", "10", "20", "30", "40", "50")
   ) +
   scale_x_discrete(expand = c(0.2, 0.2)) +
   scale_fill_manual(
     values = c("cyan4", "darkorange", "grey"),
-    labels = c("Aboveground", "Belowground", "Total")
+    labels = c("Aboveground subnetwork", "Belowground subnetwork", "Entire network")
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label
@@ -119,6 +119,7 @@ barplot_effects <- dat %>%
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.title = element_blank(),
+    legend.position="bottom",
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, face = "bold")
   )
