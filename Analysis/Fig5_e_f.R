@@ -230,6 +230,5 @@ plot <- (plot_flow / plot_stocks) &
 plot
 
 # Save the plot
-ggsave("Results/Fig4_5_compined.png", plot,
-  width = 20, height = 20, units = "cm"
-)
+# ggsave("Results/Fig4_5_compined.png", plot,
+#  width = 20, height = 20, units = "cm")
