@@ -38,16 +38,15 @@ run_model_all_vars <- function(dat, first, y, type,
   }
 
   # step 1: create the model formula as text --------------------------------
-  if (first == "FDbranch") {
-    model_formula <- paste0(
-      y, " ~ block + ", first
-    )
-  } else {
     model_formula <- paste0(
       y, " ~ block + ", first, " + ",
       paste0(all_vars, collapse = " + ")
     )
-  }
+  
+  # Remove trailing + from model formula if there
+  model_formula <- gsub("\\s\\+\\s$", "", model_formula)
+  
+  
   # step 2: Do boxcox transformation if you want (by default it's do --------
   if (boxcox) {
     bc <- MASS::boxcox(as.formula(model_formula), data = dat, plotit = FALSE)
@@ -58,11 +57,15 @@ run_model_all_vars <- function(dat, first, y, type,
         "log(", y, ") ~ block + ", first, " + ",
         paste0(all_vars, collapse = " + ")
       )
+      # Remove trailing + if needed
+      model_formula <- gsub("\\s\\+\\s$", "", model_formula)
     } else {
       model_formula <- paste0(
         "(", y, " ^ lambda -1)/lambda ~ block + ", first, " + ",
         paste0(all_vars, collapse = " + ")
       )
+      # Remove trailing + if needed
+      model_formula <- gsub("\\s\\+\\s$", "", model_formula)
     }
   } else {
     # lambda is NA to show that there was no boxcox transformation
