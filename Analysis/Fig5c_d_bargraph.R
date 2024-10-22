@@ -8,11 +8,11 @@ library(ggtext)
 # Percentages of significant effects
 # calculate percentages of significant effects
 # Data
-df_main <- read_csv("Results/mod_main_text.csv") %>% 
-# df_main <- read_csv("Results/mod_supp.csv") %>% 
+# df_main <- read_csv("Results/mod_main_text.csv") %>% 
+ df_main <- read_csv("Results/mod_supp.csv") %>% 
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                              .default=predictor)) %>% 
-  filter(predictor %in% c("FDis", "FDbranch"))
+  filter(predictor %in% c("FDis", "RaoQ","FDbranch"))
 
 str(df_main)
 
