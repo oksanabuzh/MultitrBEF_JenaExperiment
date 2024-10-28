@@ -8,12 +8,12 @@ library(patchwork)
 
 # Read the data -----------------------------------------------------------
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
-    filter(predictor %in% c("FDis", "FDbranch"))
+    filter(predictor %in% c("FDbranch", "FDis"))
 
 df_rootShoot <- read_csv("Results/mod_ShootRoot.csv")%>% # roots and shoots separately
 mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                            .default=predictor)) %>% 
-  filter(predictor %in% c("FDis", "FDbranch"))
+  filter(predictor %in% c("FDbranch", "FDis"))
 
 
 group <- read_csv("Data/EF_grouped.csv")
@@ -54,7 +54,7 @@ df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("FDis", "FDbranch")
+      levels = c("FDbranch", "FDis")
     ),
     Ecos_Function = case_match(Ecos_Function,
       "Carbon_uptake" ~ "Carbon uptake",
@@ -123,7 +123,7 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
   left_join(df_colors_stocks, by = c("group_value", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("FDis", "FDbranch")
+      levels = c("FDbranch", "FDis")
     )
   ) %>%
   mutate(group_value = factor(group_value, levels = c(
@@ -138,18 +138,18 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
 
 # create nice facet labels
 predictor_label <- c(
-  FDis = "FDis",
-  FDbranch ="FDbranch"
+  FDbranch ="FDbranch",
+  FDis = "FDis"
 )
 
 predictor_label_flows <- c(
-  FDis = "e",
-  FDbranch = "f"
+  FDbranch = "a",
+  FDis = "b"
 )
 
 predictor_label_stocks <- c(
-  FDis = "j",
-  FDbranch = "h"
+  FDbranch = "c",
+  FDis = "d"
 )
 
 # Format x-axis so that 0 is printed as 0 and not as 0.00
@@ -174,7 +174,7 @@ plot_flow <- df_to_plot_flow %>%
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label_flows
-  ), nrow = 1, scales="free_x") +
+  ), nrow = 1) +
   geom_hline(yintercept = 2.5, color = "azure3") +
   labs(x = "Standardized effect sizes") +
   scale_x_continuous(breaks = c(-0.25, 0, 0.25), labels = plain)
@@ -192,7 +192,7 @@ plot_stocks <- df_to_plot_stocks %>%
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label_stocks
-  ), nrow = 1, scale="free_x") +
+  ), nrow = 1) +
   geom_hline(yintercept = 2.5, color = "azure3") +
   geom_hline(yintercept = 5.5, color = "azure3") +
   scale_x_continuous(breaks = c(-2, -1, 0, 1, 2)) +
@@ -200,7 +200,7 @@ plot_stocks <- df_to_plot_stocks %>%
 
 
 # Combine the plots into one ----------------------------------------------
-plot <- (plot_flow + plot_stocks) &
+plot <- (plot_flow / plot_stocks) &
   scale_color_manual(values = c("red", "royalblue")) &
   theme_bw(base_size = 14) &
   theme(

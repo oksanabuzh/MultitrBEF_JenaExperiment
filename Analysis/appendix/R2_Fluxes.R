@@ -9,7 +9,8 @@ library(ggplot2)
 
 
 # Data 
-df_main <- read_csv("Results/mod_main_text.csv")
+df_main <- read_csv("Results/mod_main_text.csv") %>% 
+  filter(!predictor %in% c("RaoQ"))
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")
@@ -23,7 +24,8 @@ df_all <- df_main %>%
  # mutate(r2_part=round(r2_part, digits=2)) %>% 
   mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
                                             "leg.ef", "gr.ef",
-                                            "sh.ef", "th.ef"))) %>% 
+                                            "sh.ef", "th.ef",
+                                             "FDbranch", "FDis"))) %>% 
   mutate(predictor=fct_recode(predictor, 
                              "Species richness" = "sowndiv",
                               "FG richness" ="numfg",
@@ -45,15 +47,15 @@ grouped <- df_all %>%
   summarise(r2_part=sum(r2_part)) %>% 
   unite("response", AG_BG:Ecos_Function, sep = " ", remove = FALSE) 
   
- 
 grouped
 
 
 sum <- grouped %>% 
   group_by(predictor) %>% 
   summarise(r2_part=sum(r2_part)) %>% 
-  mutate(response="Total Network Energy Flow")
-sum
+  mutate(response="Total Network Energy Flow")%>% 
+  ungroup()
+sum 
 
 
 my.data <- rbind(grouped, sum)
@@ -62,7 +64,7 @@ my.data
 levels(factor(my.data$response))
 
 my.data <- my.data %>% 
-  mutate(response=fct_relevel(response, c("Total Network Energy Flow",
+  mutate(response=forcats::fct_relevel(response, c("Total Network Energy Flow",
                                                                "BG Predation",
                                                                "BG Herbivory", 
                                                                "BG Decomposition",
@@ -91,7 +93,7 @@ fig <- ggplot(my.data%>%
                      colour = predictor,
                      size = r2_part)) +
   geom_point() +
- # geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
+ geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
   scale_x_discrete(position = "top") +
   scale_size_continuous(range = c(0, 17), breaks = c(0.1,  0.5, 1, 1.5, 1.8)) + 
   scale_color_brewer(palette =  "Paired") +

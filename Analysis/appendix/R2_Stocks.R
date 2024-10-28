@@ -8,7 +8,8 @@ library(tidyverse)
 library(ggplot2)
 
 # Data 
-df_main <- read_csv("Results/mod_main_text.csv")
+df_main <- read_csv("Results/mod_main_text.csv") %>% 
+  filter(!predictor %in% c("RaoQ"))
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")
@@ -21,7 +22,8 @@ df_all <- df_main %>%
   
   mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
                                             "leg.ef", "gr.ef",
-                                            "sh.ef", "th.ef"))) %>% 
+                                            "sh.ef", "th.ef",
+                                            "FDbranch", "FDis"))) %>% 
   mutate(predictor=fct_recode(predictor, 
                              "Species richness" = "sowndiv",
                               "FG richness" ="numfg",

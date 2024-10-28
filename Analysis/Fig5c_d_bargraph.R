@@ -8,11 +8,11 @@ library(ggtext)
 # Percentages of significant effects
 # calculate percentages of significant effects
 # Data
-# df_main <- read_csv("Results/mod_main_text.csv") %>% 
- df_main <- read_csv("Results/mod_supp.csv") %>% 
+df_main <- read_csv("Results/mod_main_text.csv") %>% 
+# df_main <- read_csv("Results/mod_supp.csv") %>% 
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                              .default=predictor)) %>% 
-  filter(predictor %in% c("FDis", "RaoQ","FDbranch"))
+  filter(predictor %in% c("FDis", "FDbranch"))
 
 str(df_main)
 
@@ -66,7 +66,7 @@ dat <- summarised %>%
   )) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("FDis", "FDbranch")
+      levels = c("FDbranch", "FDis")
     )
   )
 
@@ -75,8 +75,8 @@ dat <- summarised %>%
 # Modify factor labels
 
 predictor_label <- c(
-  FDis = "Functional dispersion, FDis",
-  FDbranch ="Dendrogram branch length, FDbranch"
+  FDbranch ="Dendrogram branch length, FDbranch",
+  FDis = "Functional dispersion, FDis"
 )
 
 # Make plot ---------------------------------------------------------------
@@ -91,12 +91,13 @@ barplot_effects <- dat %>%
   scale_y_continuous(
     breaks = seq(-10, 50, by = 10),
     limits = c(-10, 51),
-    expand = c(0, 0)
+    expand = c(0, 0),
+    labels=c("10", "0", "10", "20", "30", "40", "50")
   ) +
   scale_x_discrete(expand = c(0.2, 0.2)) +
   scale_fill_manual(
     values = c("cyan4", "darkorange", "grey"),
-    labels = c("Aboveground", "Belowground", "Total")
+    labels = c("Aboveground subnetwork", "Belowground subnetwork", "Entire network")
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label
@@ -111,6 +112,7 @@ barplot_effects <- dat %>%
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.title = element_blank(),
+    legend.position="bottom",
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, face = "bold")
   )
