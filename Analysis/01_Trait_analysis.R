@@ -10,7 +10,7 @@ community_raw <- read_csv("Data/Plant_Commun_Compos.csv", col_types = cols(.defa
 
 # Prepare community --------------------------------------------------------
 community <- community_raw |>
-  filter(Year == "2010") |>
+  filter(Year == "2003") |>
   pivot_longer(-c(Month, Year, Plot), names_to = "sp", values_to = "cover") |>
   mutate(cover = as.numeric(cover)) |>
   drop_na() |>
@@ -107,7 +107,7 @@ trait_matrix_list <- community_p_a |>
   map(create_trait_matrix, all_traits = trait_matrix)
 
 # Function to calculate the sum of branch lengths
-trait_matrix <- trait_matrix_list[[6]]
+trait_matrix <- trait_matrix_list[[5]]
 sum_bl <- function(trait_matrix) {
   if (!is.matrix(trait_matrix)) {
     # if we only have one species, trait_matrix will be a vectors and we return 0
@@ -120,16 +120,15 @@ sum_bl <- function(trait_matrix) {
         # we would get NaN for the distance because we divide by 0
         # find all columns where all values are exactly the same
         same_values <- apply(trait_matrix, 2, function(x) length(unique(x)) == 1) |> which()
-        # remove these columns
+        # add a very small random value to these traits to make them unique
         if (length(same_values) > 0) {
           print(paste("Removed columns:", same_values))
-          trait_matrix <- trait_matrix[, -same_values]
+          values_to_add <- rnorm(nrow(trait_matrix) * length(same_values), 
+                                 mean = 0, sd = 0.0001)
+          trait_matrix[, same_values] <- trait_matrix[, same_values] + values_to_add
         }
 
         dist <- FD::gowdis(trait_matrix)
-        # add the number of combinations that were removed (is zero if not
-        # traits are removed)
-        dist <- dist + length(same_values)
         dist <- na.omit(dist)
         tree <- hclust(dist, method = "average")
         res <- vegan::treeheight(tree)
