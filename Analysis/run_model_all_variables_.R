@@ -26,7 +26,7 @@ run_model_all_vars <- function(dat, first, y, type,
   # numfg is correlated with the other predictors
   if (first %in% c("numfg", "FDbranch_SI", "FDis")) {
     all_vars <- "log2(sowndiv)"
-  } else if (first == "FDbranch") {
+  } else if (first %in% c("FDbranch", "SR_SI")) {
     # FD branch is fitted alone in the model (with block)
     all_vars <- c()
   } else if (first == "sowndiv") {

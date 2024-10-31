@@ -8,11 +8,7 @@ library(ggtext)
 # calculate percentages of significant effects
 # Data
 
-df_main <- read_csv("Results/mod_supp.csv") %>% 
-mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
-                           .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
-
+df_main <- read_csv("Results/mod_supp.csv") 
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")
@@ -30,7 +26,7 @@ dat_perc <- dat_perc %>%
 
 
 count <- dat_perc %>% 
-  count(predictor, Dimens, AG_BG, Signif, Eff_sighn) %>% 
+  count(predictor, Dimens, AG_BG, Signif,  Eff_sighn) %>% 
   add_count(predictor, Dimens, wt=sum(n), name = "sum") %>% 
   filter(Signif=="Signif")
 count
@@ -38,7 +34,8 @@ count
 summarised <- count %>% 
   mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
                                             "leg.ef", "gr.ef",
-                                            "sh.ef", "th.ef"))) %>% 
+                                            "sh.ef", "th.ef",
+                                            "FDbranch", "FDis"))) %>% 
   pivot_wider(names_from = "AG_BG", values_from = "n") %>%
   mutate(AG = ifelse(is.na(AG), 0, AG),     
          AG_BG = ifelse(is.na(AG_BG), 0, AG_BG),
@@ -72,7 +69,8 @@ dat <- summarised %>%
   )) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
+                 "FDbranch", "FDis")
     )
   )
 
@@ -86,9 +84,13 @@ predictor_label <- c(
   numfg = "Functional group richness",
   sh.ef = "Presence of small herbs",
   sowndiv = "Species richness",
-  th.ef = "Presence of tall herbs")
+  th.ef = "Presence of tall herbs",
+  FDbranch ="Branch length, FDbranch",
+  FDis = "Functional dispersion, FDis")
+
 
 # Make plot ---------------------------------------------------------------
+
 
 barplot_effects <- dat %>%
   ggplot(aes(x = Dimens, y = value, fill = name)) +
@@ -100,16 +102,17 @@ barplot_effects <- dat %>%
   scale_y_continuous(
     breaks = seq(-10, 50, by = 10),
     limits = c(-10, 51),
-    expand = c(0, 0)
+    expand = c(0, 0),
+    labels=c("10", "0", "10", "20", "30", "40", "50")
   ) +
   scale_x_discrete(expand = c(0.2, 0.2)) +
   scale_fill_manual(
     values = c("cyan4", "darkorange", "grey"),
-    labels = c("Aboveground", "Belowground", "Total")
+    labels = c("Aboveground subnetwork", "Belowground subnetwork", "Entire network")
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label
-  )) +
+  ), nrow = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(),
@@ -120,8 +123,12 @@ barplot_effects <- dat %>%
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.title = element_blank(),
+    legend.position="bottom",
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, face = "bold")
-  )
+  )+
+  theme(panel.spacing.y = unit(2, "lines"))
+
 
 barplot_effects
+

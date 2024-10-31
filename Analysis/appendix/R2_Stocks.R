@@ -8,8 +8,7 @@ library(tidyverse)
 library(ggplot2)
 
 # Data 
-df_main <- read_csv("Results/mod_main_text.csv") %>% 
-  filter(!predictor %in% c("RaoQ"))
+df_main <- read_csv("Results/mod_main_text.csv") 
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")

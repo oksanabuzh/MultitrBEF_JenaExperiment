@@ -9,8 +9,7 @@ library(ggplot2)
 
 
 # Data 
-df_main <- read_csv("Results/mod_main_text.csv") %>% 
-  filter(!predictor %in% c("RaoQ"))
+df_main <- read_csv("Results/mod_main_text.csv")
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")
@@ -91,7 +90,7 @@ max(my.data$r2_part)
 # # Bubble chart showing partial R2
 
 fig <- ggplot(my.data%>%
-              #  filter(!response=="Total Network Energy Flow") %>% 
+                filter(!response=="Total Network Energy Flow") %>% 
                 mutate(r2_part = (ifelse( r2_part>0, r2_part, NA))),
               aes(x = predictor, 
                      y = response,
@@ -100,7 +99,7 @@ fig <- ggplot(my.data%>%
   geom_point() +
 # geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
   scale_x_discrete(position = "top") +
-  scale_size_continuous(range = c(0, 17), breaks = c(0.1,  0.5, 1, 1.5, 1.8)) + 
+  scale_size_continuous(range = c(0, 17), breaks = c(0.1,  0.2, 0.3, 0.4)) + 
   scale_color_brewer(palette =  "Paired") +
   #  labs(x = NULL, y = NULL) +
   theme(legend.position = "bottom",

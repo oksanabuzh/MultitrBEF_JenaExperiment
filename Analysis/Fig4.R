@@ -7,19 +7,9 @@ library(tidyverse)
 library(patchwork)
 
 # Read the data -----------------------------------------------------------
-df_main <- read_csv("Results/mod_main_text.csv") %>% 
-  mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
-                             .default=predictor)) %>% 
-  filter(!predictor %in% c("RaoQ","FDis")) %>% 
-  mutate(predictor=(case_when(predictor=="FDis_pa" ~ "FDis",
-                              .default=predictor)))
+df_main <- read_csv("Results/mod_main_text.csv") 
 
-df_rootShoot <- read_csv("Results/mod_ShootRoot.csv")%>% # roots and shoots separately
-mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
-                           .default=predictor)) %>% 
-  filter(!predictor %in% c("RaoQ","FDis")) %>% 
-  mutate(predictor=(case_when(predictor=="FDis_pa" ~ "FDis",
-                              .default=predictor)))
+df_rootShoot <- read_csv("Results/mod_ShootRoot.csv")
 
 
 group <- read_csv("Data/EF_grouped.csv")
@@ -60,7 +50,8 @@ df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "FDbranch", "FDis")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
+                 "FDbranch", "FDis")
     ),
     Ecos_Function = case_match(Ecos_Function,
       "Carbon_uptake" ~ "Carbon uptake",
