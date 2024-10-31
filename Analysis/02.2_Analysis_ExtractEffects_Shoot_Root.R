@@ -36,7 +36,8 @@ names(Index)
 
 # create a table with all models to be calculated
 all_models <- expand.grid(
-  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "FDis_pa", "FDis", "FDbranch"),
+  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
+        "FDbranch", "FDis"),
   y = names(Index[17:18])
 )
 
