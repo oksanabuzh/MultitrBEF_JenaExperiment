@@ -9,7 +9,7 @@ library(ggtext)
 # calculate percentages of significant effects
 # Data
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
-   filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+   filter(!predictor %in% c( "RaoQ"))
 
 str(df_main)
 
@@ -36,7 +36,8 @@ count
 summarised <- count %>% 
   mutate(predictor=fct_relevel(predictor, c("sowndiv", "numfg",
                                             "leg.ef", "gr.ef",
-                                            "sh.ef", "th.ef"))) %>% 
+                                            "sh.ef", "th.ef",
+                                            "FDbranch", "FDis"))) %>% 
   pivot_wider(names_from = "AG_BG", values_from = "n") %>%
   mutate(AG = ifelse(is.na(AG), 0, AG),     
          AG_BG = ifelse(is.na(AG_BG), 0, AG_BG),
@@ -70,7 +71,8 @@ dat <- summarised %>%
   )) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
+                 "FDbranch", "FDis")
     )
   )
 
@@ -84,7 +86,9 @@ predictor_label <- c(
   numfg = "Functional group richness",
   sh.ef = "Presence of small herbs",
   sowndiv = "Species richness",
-  th.ef = "Presence of tall herbs")
+  th.ef = "Presence of tall herbs",
+  FDbranch ="Branch length, FDbranch",
+  FDis = "Functional dispersion, FDis")
 
 # Make plot ---------------------------------------------------------------
 
@@ -108,7 +112,7 @@ barplot_effects <- dat %>%
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label
-  )) +
+  ), nrow = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(),
@@ -122,7 +126,9 @@ barplot_effects <- dat %>%
     legend.position="bottom",
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, face = "bold")
-  )
+  )+
+  theme(panel.spacing.y = unit(2, "lines"))
+
 
 barplot_effects
 

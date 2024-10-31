@@ -10,12 +10,12 @@ library(patchwork)
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                              .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+  filter(!predictor %in% c("RaoQ"))
 
 df_rootShoot <- read_csv("Results/mod_ShootRoot.csv")%>% # roots and shoots separately
 mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                            .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+  filter(!predictor %in% c("RaoQ"))
 
 
 group <- read_csv("Data/EF_grouped.csv")
@@ -56,7 +56,7 @@ df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", "FDbranch", "FDis")
     ),
     Ecos_Function = case_match(Ecos_Function,
       "Carbon_uptake" ~ "Carbon uptake",
@@ -125,7 +125,8 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
   left_join(df_colors_stocks, by = c("group_value", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
+                 "FDbranch", "FDis")
     )
   ) %>%
   mutate(group_value = factor(group_value, levels = c(
@@ -154,16 +155,20 @@ predictor_label_flows <- c(
   numfg = "b",
   sowndiv = "a",
   sh.ef = "e",
-  th.ef = "f"
+  th.ef = "f",
+  FDbranch = "g",
+  FDis = "h"
 )
 
 predictor_label_stocks <- c(
-  gr.ef = "j",
-  leg.ef = "i",
-  numfg = "h",
-  sh.ef = "k",
-  sowndiv = "g",
-  th.ef = "l"
+  sowndiv = "i",
+  numfg = "j",
+  leg.ef = "k",
+  gr.ef = "l",
+  sh.ef = "m",
+    th.ef = "n",
+  FDbranch = "o",
+  FDis = "p"
 )
 
 # Format x-axis so that 0 is printed as 0 and not as 0.00
@@ -220,7 +225,7 @@ plot <- (plot_flow / plot_stocks) &
   theme(
     legend.position = "none",
     panel.border = element_rect(fill = NA, colour = "grey30", linewidth = 0.8),
-    axis.text.x = element_text(size = 10, colour = "black"),
+    axis.text.x = element_text(size = 8, colour = "black"),
     axis.text.y = element_text(size = 12, colour = "black"),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),

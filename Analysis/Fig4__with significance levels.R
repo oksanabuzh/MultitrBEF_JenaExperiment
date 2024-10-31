@@ -12,12 +12,12 @@ library(patchwork)
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                              .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+  filter(!predictor %in% c("RaoQ"))
 
 df_rootShoot <- read_csv("Results/mod_ShootRoot.csv") %>% # roots and shoots separately
   mutate(predictor=case_when(predictor=="sum_bl" ~ "FDbranch",
                              .default=predictor)) %>% 
-  filter(!predictor %in% c("FDis", "FDbranch", "RaoQ"))
+  filter(!predictor %in% c("RaoQ"))
 
 
 group <- read_csv("Data/EF_grouped.csv")
@@ -56,9 +56,12 @@ df_colors_flow <- df_to_plot_flow %>%
 # in the right order to plot
 df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
+  mutate(context=case_when(Ecos_Function %in% c("AG", "BG") ~ "AG_BG",
+                           .default = "EF")) %>% 
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
+                 "FDbranch", "FDis")
     ),
     Ecos_Function = case_match(Ecos_Function,
       "Carbon_uptake" ~ "Carbon uptake",
@@ -74,12 +77,14 @@ df_to_plot_flow <- df_to_plot_flow %>%
 # Add significance
 df_to_plot_flow <- df_to_plot_flow %>%
   mutate(significance = case_when(
-    Ecos_Function %in% c("AG", "BG") & predictor == "sowndiv" ~ "s",
-    Ecos_Function %in% c("AG", "BG") & predictor == "gr.ef" ~ "s",
-    !(Ecos_Function %in% c("AG", "BG")) & predictor == "leg.ef" ~ "s",
+    context=="AG_BG" & predictor == "sowndiv" ~ "s",
+    context=="AG_BG" & predictor == "gr.ef" ~ "s",
+    context=="AG_BG" & predictor == "sh.ef" ~ "s",
+    context=="AG_BG" & predictor == "FDbranch" ~ "s",
+    context=="EF" & predictor == "leg.ef" ~ "s",
     TRUE ~ "ns"
   ))
-
+df_to_plot_flow$context
 # Prepare stocks ----------------------------------------------------------
 
 df_all_stocks <- df_main %>%
@@ -128,16 +133,27 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
   left_join(df_colors_stocks, by = c("group_value", "predictor")) %>%
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef")
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
+                 "FDbranch", "FDis")
     )
   ) %>%
   mutate(group_value = factor(group_value, levels = c(
     "BG", "AG", "1", "2", "3", "Plants", "Detritus", "Herbivores", "Decomposers",
     "Omnivores", "Carnivores"
-  )))
+  ))) %>% 
+  mutate(context=case_when(group_value %in% c("AG", "BG") ~ "AG_BG",
+                           group_value %in% c("1", "2", "3") ~ "Tr_level",
+                           .default = "TR_Group"))
 
 df_to_plot_stocks <- df_to_plot_stocks %>%
   mutate(significance = "ns")
+
+
+df_to_plot_stocks <- df_to_plot_stocks %>%
+  mutate(significance = case_when(
+    context=="TR_Group" & predictor == "FDbranch" ~ "s",
+    TRUE ~ "ns"
+  ))
 
 # Make flow plot ----------------------------------------------------------
 
@@ -150,6 +166,7 @@ predictor_label <- c(
   sowndiv = "Species richness",
   th.ef = "Presence of tall herbs"
 )
+ 
 
 predictor_label_flows <- c(
   gr.ef = "d",
@@ -157,16 +174,20 @@ predictor_label_flows <- c(
   numfg = "b",
   sowndiv = "a",
   sh.ef = "e",
-  th.ef = "f"
+  th.ef = "f",
+  FDbranch = "g",
+  FDis = "h"
 )
 
 predictor_label_stocks <- c(
-  gr.ef = "j",
-  leg.ef = "i",
-  numfg = "h",
-  sh.ef = "k",
-  sowndiv = "g",
-  th.ef = "l"
+  sowndiv = "i",
+  numfg = "j",
+  leg.ef = "k",
+  gr.ef = "l",
+  sh.ef = "m",
+  th.ef = "n",
+  FDbranch = "o",
+  FDis = "p"
 )
 
 # Format x-axis so that 0 is printed as 0 and not as 0.00
@@ -183,7 +204,7 @@ mean_point_size <- 1.8
 plot_flow <- df_to_plot_flow %>%
   ggplot(aes(y = Ecos_Function, x = effect_size_st, color = color)) +
   geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
- # geom_jitter(height = 0.1, width = 0, alpha = 0.2, size = jitter_size) +
+#geom_jitter(height = 0.1, width = 0, alpha = 0.2, size = jitter_size) +
   stat_summary(fun = "mean", geom = "point", aes(size = significance))+#size = mean_point_size) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
@@ -203,7 +224,7 @@ plot_flow <- df_to_plot_flow %>%
 plot_stocks <- df_to_plot_stocks %>%
   ggplot(aes(y = group_value, x = effect_size_st, color = color)) +
   geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
- # geom_jitter(height = 0.3, width = 0.05, alpha = 0.2, size = jitter_size) +
+#geom_jitter(height = 0.3, width = 0.05, alpha = 0.2, size = jitter_size) +
   stat_summary(fun = "mean", geom = "point", aes(size = significance)) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
@@ -227,7 +248,7 @@ plot <- (plot_flow / plot_stocks) &
   theme(
     legend.position = "none",
     panel.border = element_rect(fill = NA, colour = "grey30", linewidth = 0.8),
-    axis.text.x = element_text(size = 10, colour = "black"),
+    axis.text.x = element_text(size = 8, colour = "black"),
     axis.text.y = element_text(size = 12, colour = "black"),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),

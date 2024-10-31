@@ -56,11 +56,26 @@ trait_matrix <- trait_matrix[-which(rownames(trait_matrix) %in% species_not_in_c
 community_matrix <- community_matrix[, -which(colnames(community_matrix) %in% species_not_in_comm)]
 
 # Calculate functional diversity
-fun_div <- FD::dbFD(trait_matrix, community_matrix,
-  calc.CWM = FALSE
+fun_div <- FD::dbFD(trait_matrix, community_matrix, calc.CWM = FALSE, 
+                    w.abun = T
 )
 fun_div_results <- as_tibble(fun_div)
 fun_div_results$plot <- names(fun_div$FDis)
+
+# Calculate FD based on presence/absence
+fun_div_pa <- as_tibble(FD::dbFD(trait_matrix,  
+                                 as.matrix((community_matrix>0)+0)), calc.CWM = FALSE,
+                        w.abun = F)
+fun_div_pa$plot <- names(fun_div_pa$FDis)    
+
+
+fun_div_results <- fun_div_pa %>% 
+  select(plot, FDis) %>% 
+  rename("FDis_pa"="FDis") %>% 
+  left_join(fun_div_results%>% 
+              select(plot, nbsp, FDis), by="plot")
+
+fun_div_results
 # Calculate sum of branchlengths of dendrogram -----------------------------
 # Calculated equivalent to the SumBL function from the cati r package
 
@@ -143,16 +158,38 @@ bl_results <- tibble(
 
 # Combine all fd results and make correlation ------------------------------
 all_fun_div <- left_join(fun_div_results, bl_results, by = "plot") |>
-  select(-qual.FRic) |>
-  select(plot, RaoQ, FDis, FDbranch)
+ # select(-qual.FRic) |>
+  select(plot, FDis, FDis_pa, FDbranch)
 
 # Save the results
 write_csv(all_fun_div, "Results/functional_diversity.csv")
 
 # Check correlations
-all_fun_div |>
-  select(RaoQ, FDbranch, FDis) |>
+
+Index <- readr::read_csv("Data/net_ind_fluxes.csv")
+str(Index)
+
+# Read functional diversity indices
+fun_div <- left_join(fun_div_results, bl_results, by = "plot") |>
+ # select(-qual.FRic) |>
+  select(plot, nbsp, FDis, FDis_pa, FDbranch)
+
+# join both tables by Plot ID
+Index <- Index %>% 
+  left_join(fun_div, by = c("plotcode" = "plot")
+  ) |> 
+  relocate(
+    all_of(c("nbsp", "FDis", "FDis_pa", "FDbranch")),
+    .before = sowndiv 
+  ) %>% 
+  rename("SR_2010"="nbsp")
+
+
+Index |>
+  select(sowndiv, SR_2010, numfg, FDbranch, FDis, FDis_pa) |>
   cor() |>
   ggcorrplot::ggcorrplot(
-    lab = TRUE
+    lab = TRUE, type = "lower",
+    outline.color = "white",
+    colors = c("red", "white", "blue")
   )

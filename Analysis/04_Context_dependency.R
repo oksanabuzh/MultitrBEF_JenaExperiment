@@ -21,17 +21,17 @@ str(df_main)
 group <- read_csv ("Data/EF_grouped.csv")
 names(group)
 
-df_all <- df_main %>% 
+df_stock <- df_main %>% 
   left_join(group, by = join_by(response)) %>% 
   filter(Dimens=="stock") %>% 
   mutate(Tr_level=as_factor(Trophic_level)) %>% 
   mutate(Tr_Group=fct_relevel(Tr_Group,c("Plants","Detritus","Herbivores","Decomposers","Omnivores","Carnivores")))
 
 
-str(df_all)
-df_all$Tr_level
-df_all$Tr_Group
-factor(df_all$AG_BG)
+str(df_stock)
+df_stock$Tr_level
+df_stock$Tr_Group
+factor(df_stock$AG_BG)
 
 # Data when shoots and roots considered separately 
 df_ShootRoot <- read_csv("Results/mod_ShootRoot.csv")
@@ -49,7 +49,7 @@ str(df_AG_BG)
 
 # metaanalysis stocks -----
 
-Meta_Tr_Gr_Lvl <- df_all %>% 
+Meta_Tr_Gr_Lvl <- df_stock %>% 
   filter(!predictor=="RaoQ")%>% 
   nest_by(predictor) %>%
   mutate(Model = list(car::Anova(lm(effect_size_st ~ Tr_Group, data = data))),
@@ -60,6 +60,7 @@ reframe(m1=tidy(Model), m2=tidy(Model_2))  %>% # same as summarise()
   select(-name) %>% 
   filter(!term=="Residuals")
 
+Meta_Tr_Gr_Lvl
 
 Meta_AG_BG <- df_AG_BG %>% 
   filter(!predictor=="RaoQ")%>% 
@@ -77,3 +78,81 @@ Meta_Stock <- Meta_Tr_Gr_Lvl %>%
   arrange(predictor)
 
 Meta_Stock
+
+
+print(Meta_Stock, n=24)
+
+write_csv(Meta_Stock, "Results/Tables_3_4_5.csv")
+
+
+
+## Significant effect of Tr_Group ----
+m1_FDbranch<-lm(effect_size_st ~  Tr_Group, data=df_stock %>% 
+            filter(predictor=="FDbranch"))
+
+anova(m1_FDbranch)
+
+
+# Marginal means and pairwise differences 
+
+emmeans::emmeans(m1_FDbranch, list(pairwise ~ Tr_Group))
+# to add letters for post-hoc test:
+model_means_TG <- multcomp::cld(emmeans::emmeans(m1_FDbranch, list(pairwise ~ Tr_Group)),  
+                                Letters = letters, adjust = "Tukey")
+model_means_TG
+
+library(tidyverse) 
+library(scales)    
+
+ggplot(data = model_means_TG) +
+  theme_bw()+
+  geom_point(aes(y = emmean, x = Tr_Group), size = 2, color = "black") +
+  geom_errorbar( aes(ymin = lower.CL, ymax = upper.CL, x = Tr_Group),
+                 width = 0.05, color = "black") +
+  geom_text(aes(y = emmean, x = Tr_Group, label = str_trim(.group)),
+            position = position_nudge(x = 0.1), hjust = 0,color = "black") 
+
+
+
+
+
+# Metaanalysis for  fluxes ----
+
+df_flux <- df_main %>% 
+  left_join(group, by = join_by(response)) %>% 
+  filter(Dimens=="flow") 
+
+str(df_flux)
+
+Meta_EcosFunc <- df_flux %>% 
+  filter(!predictor=="RaoQ")%>% 
+  nest_by(predictor) %>%
+  mutate(Model = list(car::Anova(lm(effect_size_st ~ Ecos_Function, data = data)))) %>%
+  reframe(m1=tidy(Model))  %>% 
+  unnest(m1) %>% 
+  filter(!term=="Residuals") 
+
+Meta_EcosFunc
+
+Meta_AG_BG_flux <- df_flux %>% 
+  filter(!AG_BG=="AG_BG") %>% 
+  filter(!predictor=="RaoQ")%>% 
+  nest_by(predictor) %>%
+  mutate(Model = list(car::Anova(lm(effect_size_st ~ AG_BG, data = data)))) %>%
+  reframe(m1=tidy(Model))  %>% 
+  unnest(m1) %>% 
+  filter(!term=="Residuals") 
+
+Meta_AG_BG_flux
+
+Meta_Flux <- Meta_EcosFunc %>% 
+  bind_rows(Meta_AG_BG_flux) %>% 
+  rename(F.value=statistic) %>% 
+  arrange(predictor) 
+
+Meta_Flux
+
+
+
+write_csv(Meta_Flux, "Results/Tables_1_2.csv")
+

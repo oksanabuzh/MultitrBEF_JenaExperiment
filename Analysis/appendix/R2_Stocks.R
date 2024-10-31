@@ -92,13 +92,14 @@ my.data <- my.data %>% mutate(response=fct_relevel(response, c("Total Network St
   # # Bubble chart showing partial R2
 
 fig <- ggplot(my.data%>%
+                filter(!response=="Total Network Stock") %>% 
                 mutate(r2_part = (ifelse( r2_part>0, r2_part, NA))),
               aes(x = predictor, 
                      y = response,
                      colour = predictor,
                      size = r2_part)) +
   geom_point() +
- geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
+#  geom_text(aes(label = r2_part),  colour = "black",  size = 4) +
   scale_x_discrete(position = "top") +
   scale_size_continuous(range = c(2, 17)) + 
   scale_color_brewer(palette =  "Paired") +
