@@ -37,11 +37,15 @@ names(Index)
 # for Main text: type I sum of squares are used
 # for Supplementary: type II sum of squares are used
 
+# extract all possible response variables from the Index table
+# start from o_Plants until the rest of the names
+responses <- names(Index)[which(names(Index) == "o_Plants"):length(names(Index))]
+
 # create a table with all models to be calculated
 all_models <- expand.grid(
   x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
         "FDbranch", "FDis"),
-  y = names(Index)[17:69]
+  y = responses
 )
 
 # Analysis main text ------------------------------------------------------

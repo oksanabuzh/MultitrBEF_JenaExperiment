@@ -3,3 +3,6 @@
 .Rdata
 .httr-oauth
 .DS_Store
+check_my_results.R
+questions.md
+test.R

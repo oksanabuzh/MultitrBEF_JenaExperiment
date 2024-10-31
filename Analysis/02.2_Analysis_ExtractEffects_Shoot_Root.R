@@ -19,7 +19,7 @@ Index <- Index %>%
   left_join(fun_div, by = c("plotcode" = "plot")
   ) |> 
   relocate(
-    all_of(c("FDis_pa", "FDis", "FDbranch")),
+    all_of(c("FDis", "FDbranch")),
     .before = sowndiv 
   )
 
@@ -33,12 +33,11 @@ names(Index)
 # y ~ block + variable_of_interest + all_other_variables
 # type I sum of squares are used
 
-
 # create a table with all models to be calculated
 all_models <- expand.grid(
   x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
         "FDbranch", "FDis"),
-  y = names(Index[17:18])
+  y = c("root_StandBiom", "shoot_StandBiom")
 )
 
 # Analysis main text ------------------------------------------------------
