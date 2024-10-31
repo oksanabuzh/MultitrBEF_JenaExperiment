@@ -6,6 +6,7 @@ library(glue)
 # load function to calculate models
 source("Analysis/run_model_all_variables.R")
 
+
 # Prepare the data --------------------------------------------------------
 Index <- readr::read_csv("Data/net_ind_fluxes.csv")
 str(Index)
