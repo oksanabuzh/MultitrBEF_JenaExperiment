@@ -38,16 +38,11 @@ run_model_all_vars <- function(dat, first, y, type,
       all_vars <- c()
     }
   } else if (first == "sowndiv") {
-    if (SI) {
-      # For the SI sowndiv is fitted alone in the model
-      first <- "log2(sowndiv)"
-      all_vars <- c()
-    } else {
-      # For the main text sowndiv is fitted with all other variables expcept
-      # numfg
       first <- "log2(sowndiv)"
       all_vars <- all_vars[!(all_vars == "numfg")]
-    }
+  } else if (first == "sowndiv_alone") {
+    first <- "log2(sowndiv_alone)"
+    all_vars <- c()
   } else {
     all_vars <- all_vars[!(all_vars == "numfg")]
     all_vars[all_vars == "sowndiv"] <- "log2(sowndiv)"
@@ -133,6 +128,8 @@ run_model_all_vars <- function(dat, first, y, type,
   # if first is sowndiv, we need to remove the log2 to extract the correct coeff
   if (first == "log2(sowndiv)") {
     first <- "sowndiv"
+  } else if (first == "log2(sowndiv_alone)"){
+    first <- "sowndiv_alone"
   } else if ("log2(sowndiv)" %in% all_vars) {
     all_vars[all_vars == "log2(sowndiv)"] <- "sowndiv"
   }

@@ -8,7 +8,10 @@ source("Analysis/run_model_all_variables.R")
 
 
 # Prepare the data --------------------------------------------------------
-Index <- readr::read_csv("Data/net_ind_fluxes.csv")
+Index <- readr::read_csv("Data/net_ind_fluxes.csv") |> 
+  # duplicate the sowndiv column because it will be fitted alone and with other
+  # variables
+  mutate(sowndiv_alone = sowndiv)
 str(Index)
 
 # Read functional diversity indices
@@ -18,7 +21,7 @@ fun_div <- read_csv("Results/functional_diversity.csv")
 Index <- Index %>%
   left_join(fun_div, by = c("plotcode" = "plot")) |>
   relocate(
-    all_of(c("FDbranch", "FDis")),
+    all_of(c("FDbranch", "FDis", "sowndiv_alone")),
     .before = sowndiv
   )
 
@@ -43,7 +46,7 @@ responses <- names(Index)[which(names(Index) == "o_Plants"):length(names(Index))
 # create a table with all models to be calculated
 all_models <- expand.grid(
   x = c(
-    "sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
+    "sowndiv","sowndiv_alone", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
     "FDbranch", "FDis"
   ),
   y = responses
