@@ -12,23 +12,21 @@ Index <- readr::read_csv("Data/net_ind_fluxes.csv")
 str(Index)
 
 # Read functional diversity indices
-fun_div <- read_csv("Results/functional_diversity.csv") %>% 
-  mutate(FDbranch_SI=FDbranch)
+fun_div <- read_csv("Results/functional_diversity.csv")
 
 # join both tables by Plot ID
-Index <- Index %>% 
-  left_join(fun_div, by = c("plotcode" = "plot")
-  ) |> 
+Index <- Index %>%
+  left_join(fun_div, by = c("plotcode" = "plot")) |>
   relocate(
-    all_of(c("FDbranch", "FDis", "FDbranch_SI")),
-    .before = sowndiv 
+    all_of(c("FDbranch", "FDis")),
+    .before = sowndiv
   )
 
 # Meaning of column names
-names(Index) 
+names(Index)
 # "_" is flow
 # "o" is out of system environment
-#  Other abbreviations in the names of trophic groups are: 
+#  Other abbreviations in the names of trophic groups are:
 # "AG" - aboveground, "BG" - belowground, "SOM" - soil organic matter
 
 # Analysis -----------------------------------------------------------------
@@ -44,8 +42,10 @@ responses <- names(Index)[which(names(Index) == "o_Plants"):length(names(Index))
 
 # create a table with all models to be calculated
 all_models <- expand.grid(
-  x = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
-        "FDbranch", "FDbranch_SI", "FDis"),
+  x = c(
+    "sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
+    "FDbranch", "FDis"
+  ),
   y = responses
 )
 
@@ -54,13 +54,13 @@ all_models <- expand.grid(
 # ..1 stands for the first column of `all_models`, i.e. x
 # ..2 stands for the second column of `all_models`, i.e. y
 # use type 1 sum of squares (anova)
-mod <- purrr::pmap_df(all_models%>% 
-                        filter(!x=="FDbranch_SI"), ~run_model_all_vars(
-  dat = Index,
-  first = ..1, 
-  y = ..2, 
-  type = 1 # type 1 sum of squares with anova()
-))
+mod <- purrr::pmap_df(all_models, ~ run_model_all_vars(
+    dat = Index,
+    first = ..1,
+    y = ..2,
+    type = 1, # type 1 sum of squares with anova()
+    SI = FALSE # main text analysis
+  ))
 
 str(mod)
 summary(mod)
@@ -68,11 +68,11 @@ summary(mod)
 write_csv(mod, "Results/mod_main_text.csv")
 
 # merge with groups of functions
-group <- read_csv ("Data/EF_grouped.csv")
+group <- read_csv("Data/EF_grouped.csv")
 names(group)
 
-df_all <- mod %>% 
-  left_join(group, by = join_by(response)) 
+df_all <- mod %>%
+  left_join(group, by = join_by(response))
 
 write_csv(df_all, "Results/TableS3.csv")
 
@@ -81,40 +81,38 @@ write_csv(df_all, "Results/TableS3.csv")
 # ..1 stands for the first column of `all_models`, i.e. x
 # ..2 stands for the second column of `all_models`, i.e. y
 # use type 2 sum of squares (car::Anova)
-mod_supp <- purrr::pmap_df(all_models %>% 
-                             filter(!x=="FDbranch"), ~run_model_all_vars(
-  dat = Index,
-  first = ..1, 
-  y = ..2, 
-  type = 2 # type 2 sum of squares with car::Anova()
-))
+mod_supp <- purrr::pmap_df(all_models, ~ run_model_all_vars(
+    dat = Index,
+    first = ..1,
+    y = ..2,
+    type = 2, # type 2 sum of squares with car::Anova()
+    SI = TRUE # supplementary analysis
+  ))
 
 str(mod_supp)
 summary(mod_supp)
 
-
-
-write_csv(mod_supp %>% 
-            mutate(predictor=case_when(predictor=="FDbranch_SI" ~ "FDbranch",
-                                       .default = predictor)), 
-          "Results/mod_supp.csv")
+write_csv(
+  mod_supp,
+  "Results/mod_supp.csv"
+)
 
 # merge with groups of functions
-group <- read_csv ("Data/EF_grouped.csv")
+group <- read_csv("Data/EF_grouped.csv")
 names(group)
 
-df_all_supp <- mod_supp %>% 
-  mutate(predictor=case_when(predictor=="FDbranch_SI" ~ "FDbranch",
-                             .default = predictor)) %>%  
-  left_join(group, by = join_by(response)) 
+df_all_supp <- mod_supp %>%
+  left_join(group, by = join_by(response))
 
 write_csv(df_all_supp, "Results/TableS4.csv")
 
 # Check results -----------------------------------------------------------
 
 # only p-values should be different
-diff <- mod %>% select(where(is.numeric)) - 
-  mod_supp %>% select(where(is.numeric)) 
+diff <- mod %>%
+  select(where(is.numeric)) -
+  mod_supp %>%
+  select(where(is.numeric))
 
 diff %>%
   pivot_longer(everything()) %>%

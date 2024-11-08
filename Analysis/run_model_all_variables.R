@@ -8,7 +8,8 @@
 #' @param all_vars a vector with all other predictor variables used in the model after
 #'     the `first` variable
 #' @param boxcox logical, should the response be transformed with boxcos?
-#'
+#' @param SI logical, should the model be fitted for the SI? In this case FD branch is fitted with
+#'     sowndiv and and sowndiv is fitted alone
 #' @return a tibble with the partial r2 for the first predictor, information on the
 #'     formula used in the model and the respons variable
 run_model_all_vars <- function(dat, first, y, type,
@@ -16,7 +17,8 @@ run_model_all_vars <- function(dat, first, y, type,
                                  "sowndiv", "numfg", "leg.ef",
                                  "gr.ef", "sh.ef", "th.ef"
                                ),
-                               boxcox = TRUE) {
+                               boxcox = TRUE,
+                               SI = FALSE) {
   first <- as.character(first)
   y <- as.character(y)
   # remove the first variable from the list of all_vars
@@ -24,29 +26,43 @@ run_model_all_vars <- function(dat, first, y, type,
 
   # Remove numfg from predictors if the first is not numfg
   # numfg is correlated with the other predictors
-  if (first %in% c("numfg", "FDbranch_SI", "FDis")) {
+  if (first %in% c("numfg", "FDis")) {
     all_vars <- "log2(sowndiv)"
   } else if (first == "FDbranch") {
-    # FD branch is fitted alone in the model (with block)
-    all_vars <- c()
+    if (SI) {
+      # For the SI FD branch is fitted with sowndiversity
+      all_vars <- "log2(sowndiv)"
+    } else {
+      # For the main text
+      # FD branch is fitted alone in the model (with block)
+      all_vars <- c()
+    }
   } else if (first == "sowndiv") {
-    first <- "log2(sowndiv)"
-    all_vars <- all_vars[!(all_vars == "numfg")]
+    if (SI) {
+      # For the SI sowndiv is fitted alone in the model
+      first <- "log2(sowndiv)"
+      all_vars <- c()
+    } else {
+      # For the main text sowndiv is fitted with all other variables expcept
+      # numfg
+      first <- "log2(sowndiv)"
+      all_vars <- all_vars[!(all_vars == "numfg")]
+    }
   } else {
     all_vars <- all_vars[!(all_vars == "numfg")]
     all_vars[all_vars == "sowndiv"] <- "log2(sowndiv)"
   }
 
   # step 1: create the model formula as text --------------------------------
-    model_formula <- paste0(
-      y, " ~ block + ", first, " + ",
-      paste0(all_vars, collapse = " + ")
-    )
-  
+  model_formula <- paste0(
+    y, " ~ block + ", first, " + ",
+    paste0(all_vars, collapse = " + ")
+  )
+
   # Remove trailing + from model formula if there
   model_formula <- gsub("\\s\\+\\s$", "", model_formula)
-  
-  
+
+
   # step 2: Do boxcox transformation if you want (by default it's do --------
   if (boxcox) {
     bc <- MASS::boxcox(as.formula(model_formula), data = dat, plotit = FALSE)
