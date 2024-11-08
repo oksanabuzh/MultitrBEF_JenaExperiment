@@ -1,15 +1,19 @@
-# Fig 4 plots
+# Fig 4 plots (include highlighted significant differences among groups)
+
 # flows grouped by ecosystem functions, and AG vs BG
 # stocks grouped by trophic groups, trophic levels and AG vs BG.
+
 
 # Packages
 library(tidyverse)
 library(patchwork)
 
 # Read the data -----------------------------------------------------------
-df_main <- read_csv("Results/mod_main_text.csv") 
+df_main <- read_csv("Results/mod_main_text.csv") %>% 
+  filter(!predictor=="sowndiv_alone")
 
-df_rootShoot <- read_csv("Results/mod_ShootRoot.csv")
+df_rootShoot <- read_csv("Results/mod_ShootRoot.csv") %>% # roots and shoots separately
+  filter(!predictor=="sowndiv_alone")
 
 
 group <- read_csv("Data/EF_grouped.csv")
@@ -48,9 +52,11 @@ df_colors_flow <- df_to_plot_flow %>%
 # in the right order to plot
 df_to_plot_flow <- df_to_plot_flow %>%
   left_join(df_colors_flow, by = c("Ecos_Function", "predictor")) %>%
+  mutate(context=case_when(Ecos_Function %in% c("AG", "BG") ~ "AG_BG",
+                           .default = "EF")) %>% 
   mutate(
     predictor = factor(predictor,
-      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef", 
+      levels = c("sowndiv", "numfg", "leg.ef", "gr.ef", "sh.ef", "th.ef",
                  "FDbranch", "FDis")
     ),
     Ecos_Function = case_match(Ecos_Function,
@@ -67,11 +73,14 @@ df_to_plot_flow <- df_to_plot_flow %>%
 # Add significance
 df_to_plot_flow <- df_to_plot_flow %>%
   mutate(significance = case_when(
-    Ecos_Function %in% c("AG", "BG") & predictor == "sowndiv" ~ "s",
-    !(Ecos_Function %in% c("AG", "BG")) & predictor == "leg.ef" ~ "s",
+    context=="AG_BG" & predictor == "sowndiv" ~ "s",
+    context=="AG_BG" & predictor == "gr.ef" ~ "s",
+    context=="AG_BG" & predictor == "sh.ef" ~ "s",
+    context=="AG_BG" & predictor == "FDbranch" ~ "s",
+    context=="EF" & predictor == "leg.ef" ~ "s",
     TRUE ~ "ns"
   ))
-
+df_to_plot_flow$context
 # Prepare stocks ----------------------------------------------------------
 
 df_all_stocks <- df_main %>%
@@ -127,10 +136,20 @@ df_to_plot_stocks <- df_to_plot_stocks %>%
   mutate(group_value = factor(group_value, levels = c(
     "BG", "AG", "1", "2", "3", "Plants", "Detritus", "Herbivores", "Decomposers",
     "Omnivores", "Carnivores"
-  )))
+  ))) %>% 
+  mutate(context=case_when(group_value %in% c("AG", "BG") ~ "AG_BG",
+                           group_value %in% c("1", "2", "3") ~ "Tr_level",
+                           .default = "TR_Group"))
 
 df_to_plot_stocks <- df_to_plot_stocks %>%
   mutate(significance = "ns")
+
+
+df_to_plot_stocks <- df_to_plot_stocks %>%
+  mutate(significance = case_when(
+    context=="TR_Group" & predictor == "FDbranch" ~ "s",
+    TRUE ~ "ns"
+  ))
 
 # Make flow plot ----------------------------------------------------------
 
@@ -143,6 +162,7 @@ predictor_label <- c(
   sowndiv = "Species richness",
   th.ef = "Presence of tall herbs"
 )
+ 
 
 predictor_label_flows <- c(
   gr.ef = "d",
@@ -161,7 +181,7 @@ predictor_label_stocks <- c(
   leg.ef = "k",
   gr.ef = "l",
   sh.ef = "m",
-    th.ef = "n",
+  th.ef = "n",
   FDbranch = "o",
   FDis = "p"
 )
@@ -173,36 +193,38 @@ plain <- function(x, ...) {
 
 jitter_width <- 0.05
 jitter_size <- 0.6
-sizes_signif <- c(1, 2)
+sizes_signif <- c(1.5, 3)
 bar_size <- 0.5
 mean_point_size <- 1.8
 
 plot_flow <- df_to_plot_flow %>%
   ggplot(aes(y = Ecos_Function, x = effect_size_st, color = color)) +
   geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
-  #geom_jitter(height = 0.1, width = 0, alpha = 0.2, size = jitter_size) +
-  stat_summary(fun = "mean", geom = "point", size = mean_point_size) +
+#geom_jitter(height = 0.1, width = 0, alpha = 0.2, size = jitter_size) +
+  stat_summary(fun = "mean", geom = "point", aes(size = significance))+#size = mean_point_size) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
-    fun.args = list(conf.int = 0.95), width = 0, size = bar_size
+    fun.args = list(conf.int = 0.95), width = 0, aes(linewidth = significance)#size = bar_size
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label_flows
   ), nrow = 1) +
   geom_hline(yintercept = 2.5, color = "azure3") +
   labs(x = "Standardized effect sizes") +
-  scale_x_continuous(breaks = c(-0.25, 0, 0.25), labels = plain)
+  scale_x_continuous(breaks = c(-0.25, 0, 0.25), labels = plain)+
+  scale_size_manual(values = sizes_signif)+
+  scale_linewidth_manual(values = c(0.3,1))
 
 # Make stocks plot --------------------------------------------------------
 # make the plot
 plot_stocks <- df_to_plot_stocks %>%
   ggplot(aes(y = group_value, x = effect_size_st, color = color)) +
   geom_vline(xintercept = 0, linetype = "dotted", color = "grey70", size = 0.5) +
-  #geom_jitter(height = 0.3, width = 0, alpha = 0.2, size = jitter_size) +
-  stat_summary(fun = "mean", geom = "point", size = mean_point_size) +
+#geom_jitter(height = 0.3, width = 0.05, alpha = 0.2, size = jitter_size) +
+  stat_summary(fun = "mean", geom = "point", aes(size = significance)) +
   stat_summary(
     fun.data = "mean_cl_normal", geom = "errorbar",
-    fun.args = list(conf.int = 0.95), width = 0, size = bar_size
+    fun.args = list(conf.int = 0.95), width = 0, aes(linewidth = significance)# size = bar_size
   ) +
   facet_wrap(~predictor, labeller = labeller(
     predictor = predictor_label_stocks
@@ -210,7 +232,9 @@ plot_stocks <- df_to_plot_stocks %>%
   geom_hline(yintercept = 2.5, color = "azure3") +
   geom_hline(yintercept = 5.5, color = "azure3") +
   scale_x_continuous(breaks = c(-2, -1, 0, 1, 2)) +
-  labs(x = "Standardized effect size")
+  labs(x = "Standardized effect size")+
+  scale_size_manual(values = sizes_signif)+
+  scale_linewidth_manual(values = c(0.3,1))
 
 
 # Combine the plots into one ----------------------------------------------
@@ -234,11 +258,9 @@ plot <- (plot_flow / plot_stocks) &
     plot.margin = margin(t = 0, b = 20, l = 0, r = 0)
   )
 
-
-
 plot
 
 # Save the plot
-ggsave("Results/Fig4_5_compined.png", plot,
+ggsave("Results/Fig4_new_SignDiffer.png", plot,
   width = 20, height = 20, units = "cm"
 )

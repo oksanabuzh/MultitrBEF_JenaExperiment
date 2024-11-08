@@ -9,7 +9,8 @@ library(ggplot2)
 
 
 # Data 
-df_main <- read_csv("Results/mod_main_text.csv")
+df_main <- read_csv("Results/mod_main_text.csv") %>% 
+  filter(!predictor=="sowndiv_alone")
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")

@@ -8,8 +8,8 @@ library(ggtext)
 # Percentages of significant effects
 # calculate percentages of significant effects
 # Data
-df_main <-  read_csv("Results/mod_main_text.csv")  
-  # read_csv("Results/mod_supp.csv") 
+df_main <-  read_csv("Results/mod_main_text.csv")  %>% 
+  filter(!predictor=="sowndiv_alone")
 
 str(df_main)
 

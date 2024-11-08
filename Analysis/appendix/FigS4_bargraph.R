@@ -8,7 +8,9 @@ library(ggtext)
 # calculate percentages of significant effects
 # Data
 
-df_main <- read_csv("Results/mod_supp.csv") 
+df_main <- read_csv("Results/mod_supp.csv") %>% 
+  filter(!predictor=="sowndiv_alone")
+
 str(df_main)
 
 group <- read_csv ("Data/EF_grouped.csv")

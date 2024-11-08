@@ -1,4 +1,4 @@
-# Produce Fig. 5
+# Produce Fig. 7
 #
 # Comparison of plant diversity effects on stocks and flows for each trophic group 
 # across aboveground and belowground subnetworks and given different 
@@ -21,7 +21,8 @@ library(sjPlot)
 # Data ----
 
 df_main <- read_csv("Results/mod_main_text.csv") %>% 
-  bind_rows(read_csv("Results/mod_ShootRoot.csv"))
+  bind_rows(read_csv("Results/mod_ShootRoot.csv"))%>% 
+  filter(!predictor=="sowndiv_alone")
 
 str(df_main)
 
@@ -328,10 +329,45 @@ th.ef_effects
 
 
 
+FDbranch_effects <- dat %>% 
+  filter(predictor=="FDbranch") %>% 
+  ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
+             #  fill=dummy_fill, 
+             shape=AG_BG_stock)) +
+  scale_shape_manual(values=MyShape2) +
+  scale_color_manual(values=myPalette)+
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
+  theme_bw() +   
+  labs(x="Effects on stocks", y= "Effects on flows", title="FDbranch",
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
+
+
+FDbranch_effects
+
+
+FDis_effects <- dat %>% 
+  filter(predictor=="FDis") %>% 
+  ggplot(aes(x = stock_effect, y = flow_effect, color = stock_group_general, 
+             #  fill=dummy_fill, 
+             shape=AG_BG_stock)) +
+  scale_shape_manual(values=MyShape2) +
+  scale_color_manual(values=myPalette)+
+  geom_abline(intercept = 0, slope = 1, col=c("gray"), linewidth=2) +
+  geom_smooth(method = "lm", se = FALSE, col=c("blue"), aes(linetype=AG_BG_stock)) +
+  geom_point(size=2, stroke=1.1 ) +
+  theme_bw() +   
+  labs(x="Effects on stocks", y= "Effects on flows", title="FDis",
+       shape="AG/BG subnetwork", col="Trophic group", linetype="AG or BG")
+
+
+FDis_effects
 
 SR_effects + numfg_effects + 
   leg.ef_effects + gr.ef_effects + 
   sh.ef_effects + th.ef_effects + 
+  FDbranch_effects + FDis_effects +
   plot_annotation(tag_levels = 'a') + 
   plot_layout(guides = "collect", ncol=2) & # theme(legend.position = 'right') +
   # plot_layout(ncol=2) & # ylab(NULL) & 
