@@ -1,10 +1,15 @@
-# Do the plant diversity effects on stocks depend on  trophic contexts?
+# Do the plant diversity effects on stocks and fluxes depend on  trophic contexts?
 
 # Comparison of the effect of plant diversity on biomass stocks (n=12) between 
 #         - trophic groups ("Plants", "Detritus", "Herbivores", "Decomposers","Omnivores", "Carnivores"), 
 #         - trophic levels (1st, 2nd, 3rd), and between 
 #         - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground). 
 # An analysis of variance with sequential sum of squares was applied.
+#
+# Comparison of the effect of plant diversity on energy fluxes (n=41) between 
+#         - ecosystem functions (Plant respiration, Herbivory, Decomposition, Predation, Detritus production, and Respiration), 
+#         - aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground).
+
 # ----------------------------------------------------
 
 rm(list=ls(all=TRUE))
