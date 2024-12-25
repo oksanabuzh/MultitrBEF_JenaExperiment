@@ -5,6 +5,8 @@ Contains codes for testing the effects of each diversity facet on each stock and
 
 # Files:
 
+"Trait_analysis" - prepares traits and community matrix and calculates functional diversity.
+
 "run_model_all_variables" - function to run linear models for multiple responses "y"" and multiple predictors "x", where the target predictor "x first" is fitted first right after "block". The function extracts the following results for each model: response, predictor, partial R2 for each predictor, model R2, p-value (depending on type of sum of squares  to be used), estimate (slope), back-transformed effect size; standardized effect size, lambda (from boxcox transformation); and model formula.
     
 
