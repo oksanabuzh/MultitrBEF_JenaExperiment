@@ -1,0 +1,45 @@
+Abbreviation,Trait,Unit,Description of trait
+rbm,root dry mass,g,Dry mass of the roots of the whole pot
+ra,root area,cm2,Root area
+laBM,living aboveground biomass,g,Living aboveground biomass
+lbpr,leaf biomass production rate,g day-1,Maximum daily leaf dry mass production 
+la,total leaf area,cm2,Total area of all leaves of plant
+sra,specific root area,cm2 g-1,Root surface area per root mass
+srl,specific root length,cm g-1,Root length per root mass
+RNU,root nitrogen uptake,mg day-1,Nitrogen uptake into roots
+nute,nutrient uptake efficiency,mg g-1,Root nitrogen uptake : root biomass
+k.rad,root area distribution,unitless,Evenness of vertical root area distribution 
+RootingDepth_Target,rooting depth,ordinal,Depth of the root system
+h1,plant height,cm,Standing height of the shoot
+erect,erectness,cm cm-1,Stretched height per standing height 
+lar,leaf area ratio,cm2 g-1,Leaf area per shoot mass
+fc,leaf form coefficient,mm2 mm,Leaf area divided by leaf perimeter 
+sla,specific leaf area,mm2 g-1,Fresh leaf area per leaf dry mass
+lSize,leaf area,mm2,Average area of a single leaf
+srr,shoot : root ratio,g g-1,Shoot mass per root mass
+sd,stem diameter,mm,Diameter of stem
+ssd,stem specific density,g cm-3,Stem dry weight per stem fresh volume 
+leafN,leaf N content,%,Leaf nitrogen Content
+leafC,leaf C content,%,Leaf carbon content
+Nacr,shoot : root N ratio,unitless,Leaf nitrogen uptake / root nitrogen uptake 
+cond,leaf conductance,?M s-1 A-1,Stomatal conductance per leaf area
+lt,leaf thickness,mm,Leaf thickness
+pp,leaf toughness,N,Leaf resistance to penetration
+lsd,leaf specific density,g cm-3,Leaf dry weight per leaf fresh volume 
+ldmc,leaf dry matter content,g g-1,Leaf dry weight per leaf fresh weight 
+LCN,leaf C/N,g g-1,C/N ratio in leaves
+rtd,root tissue density,g cm-3,Root dry weight per root volume 
+RCN,root CN ratio,unitless,Root total carbon : nitrogen content
+sdmc,seed dry matter content,g g-1,Seed dry weight per seed fresh weight 
+BM_Target_Inflorescence,biomass fraction inflorescence,mg mg-1,Inflorescence:shoot biomass fraction 
+NrInflorescence_Target_Shoot,inflorescences per shoot,nr,Number of inflorescences per shoot 
+SeedsProjArea,seeds projected area,mm2,Total area of individual seed
+SeedsTCW,seed weight,g,Weight of 1000 seeds
+SeedsWLRatio,seed width length ratio,mm mm-1,Ratio of seed width to seed length 
+NrSeedling_Target,number of seedlings,nr,Number of plant seedlings within subplot
+DurationFlowreing_Target_Phenology,duration flowering,ordinal,Duration of flowering period
+rootCa,root Ca content,‰,Ca content per root dry biomass
+rootK,root K content,‰,K content per root dry biomass
+rootNa,root Na content,‰,Na content per root dry biomass 
+rootP,root P content,‰,P content per root dry biomass
+rootS,root S content,‰,S content per root dry biomass
