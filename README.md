@@ -1,6 +1,7 @@
 # Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts
 
-#### R code and data for statistical analysis in Buzhdygan et al. (2025) Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts. Ecological Monographs 
+#### R code and data for statistical analysis in 
+#### Buzhdygan et al. (2025) Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts. Ecological Monographs 
 
 
 ### Abstract
