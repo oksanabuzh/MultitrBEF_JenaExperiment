@@ -116,7 +116,7 @@ factor(dat$stock_group_general)
 dat%>% pull(AG_BG_stock) %>% unique()
 
 
-# Table S3 -----
+# Table S4 -----
 
 run_mod <- dat %>% 
   group_by(predictor, AG_BG_stock) %>% 
@@ -133,15 +133,15 @@ names(anova(m_SR_AG))
 
 fits <- Map(cbind, Model_fits, Responce = names(Model_fits))
 
-TableS3 <- reduce(map(fits, ~ as_tibble(.x, rownames = "output")),
+TableS4 <- reduce(map(fits, ~ as_tibble(.x, rownames = "output")),
        full_join, by = c("output", "Df", "Sum Sq", "Mean Sq", "F value", 
                          "Pr(>F)", "Responce")) %>% 
   filter(!output=="Residuals")%>%
   relocate(Responce) %>% select(Responce, `F value`, `Pr(>F)`)  
 
-TableS3 
+TableS4 
 
-write_csv(TableS3, "results/Table_S3.csv")
+write_csv(TableS4, "results/Table_S4.csv")
 
 
 # check the assumptions for the models
