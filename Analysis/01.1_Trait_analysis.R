@@ -2,15 +2,13 @@
 
 library(tidyverse)
 
-
 # Read data
 traits <- read_csv("Data/traits_st_PlasFons.van.der_NatEcol_Evol_2020.csv")
 # read all columns as character
-community_raw <- read_csv("Data/Plant_Commun_Compos.csv", col_types = cols(.default = "c"))
+community_raw <- read_csv("Data/Plant_Communt_Compos.csv", col_types = cols(.default = "c"))
 
 # Prepare community --------------------------------------------------------
 community <- community_raw |>
-  filter(Year == "2003") |>
   pivot_longer(-c(Month, Year, Plot), names_to = "sp", values_to = "cover") |>
   mutate(cover = as.numeric(cover)) |>
   drop_na() |>
