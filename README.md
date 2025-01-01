@@ -28,8 +28,8 @@ Results generated in the study. See `Results/Readme.md` for details.
 
 ## Files in the main directory
 
-#### "Main Analysis.xlsx"
+#### `Main Analysis.xlsx`
 Contains results of analysis of variance with sequential sum of squares (type I) for each plant diversity facet when it was fitted first in the model before all other diversity facets (i.e., analysis in the main text of the paper, Fig.2-3). Fdbranch and sowndiv_alone were fitted alone (after Block) in the model (for details see "formula" column). See metadata in the file for details.
 
-#### "Sensitivity Analysis.xlsx"
+#### `Sensitivity Analysis.xlsx`
 Contains results of analysis of variance with sum of squares (type II) for each plant diversity facet when it was fitted last in the model after all other diversity facets (i.e., analysis in Appendix: Fig. S3-Fig.S4). See metadata in the file for details.
