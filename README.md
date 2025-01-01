@@ -3,6 +3,8 @@
 #### R code and data for statistical analysis in 
 #### Buzhdygan et al. (2025) Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts. Ecological Monographs 
 
+<!-- badges: start -->
+<!-- badges: end -->
 
 ### Abstract
 
@@ -21,3 +23,12 @@ Data files.
 ### `Results/`
 
 Results generated in the study. 
+
+
+## Files in the main directory
+
+### Main Analysis
+Contains results of analysis of variance with sequential sum of squares (type I) for each plant diversity facet when it was fitted first in the model before all other diversity facets (i.e., analysis in the main text of the paper, Fig.2-3). Fdbranch and sowndiv_alone were fitted alone (after Block) in the model (for details see "formula" column).
+
+### Sensitivity Analysis
+Contains results of analysis of variance with sum of squares (type II) for each plant diversity facet when it was fitted last in the model after all other diversity facets (i.e., analysis in Appendix: Fig. S3-Fig.S4). 
