@@ -1,7 +1,8 @@
 # Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts
 
-#### R code and data for statistical analysis in 
-#### Buzhdygan et al. (2025) Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts. Ecological Monographs 
+Code and data for
+
+Buzhdygan et al. (2025) Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts. Ecological Monographs 
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -14,15 +15,15 @@ The strength of biodiversity–ecosystem functioning (BEF) relationships varies 
 
 ### `Analysis/`
 
-Contains codes for testing the effects of plant diversity facets on each stock and flow across the food web and how these effects vary with trophic groups, trophic levels, ecosystem functions, and between aboveground and belowground subnetworks.
+Contains codes for testing the effects of plant diversity facets on each stock and flow across the food web and how these effects vary with trophic groups, trophic levels, ecosystem functions, and between aboveground and belowground subnetworks. See Analysis/Readme.md for details.
 
 ### `Data/`
 
-Data files.
+Data files. See Data/Readme.md for details.
 
 ### `Results/`
 
-Results generated in the study. 
+Results generated in the study. See Results/Readme.md for details.
 
 
 ## Files in the main directory
