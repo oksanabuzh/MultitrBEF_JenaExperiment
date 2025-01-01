@@ -1,10 +1,8 @@
 # Results
 
-
 # Files for main text:
 
-"Summary_Effects_MainText.csv" - proportion of significant positive and negative plant diversity effects for AG subnetwork, BG subnetwork and Total network (all effects) for each diversity facet ; see code "Analysis/Proportion_of_effects.R" 
-
+`Summary_Effects_MainText.csv` - proportion of significant positive and negative plant diversity effects for AG subnetwork, BG subnetwork and Total network (all effects) for each diversity facet; data generated in `Analysis/Fig3_Bargraph.R` 
 
 "stats_for_Fig4.csv" - summary statistics (mean, 95% CI, and SD) for the diversuty effcets on fluxess summerised for each group of ecosystem functions (Plant respiration, Herbivory, Decomposition, Predation, Detritus production, and Respiration) and aboveground and belowground subnetworks (AG vs BG: Aboveground, Belowground). See code "Analysis/Fig4.R"
 

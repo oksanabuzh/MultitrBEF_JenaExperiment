@@ -15,15 +15,15 @@ The strength of biodiversity–ecosystem functioning (BEF) relationships varies 
 
 ### `Analysis/`
 
-Contains codes for testing the effects of plant diversity facets on each stock and flow across the food web and how these effects vary with trophic groups, trophic levels, ecosystem functions, and between aboveground and belowground subnetworks. See Analysis/Readme.md for details.
+Contains codes for testing the effects of plant diversity facets on each stock and flow across the food web and how these effects vary with trophic groups, trophic levels, ecosystem functions, and between aboveground and belowground subnetworks. See `Analysis/Readme.md` for details.
 
 ### `Data/`
 
-Data files. See Data/Readme.md for details.
+Data files. See `Data/Readme.md` for details.
 
 ### `Results/`
 
-Results generated in the study. See Results/Readme.md for details.
+Results generated in the study. See `Results/Readme.md` for details.
 
 
 ## Files in the main directory
