@@ -14,7 +14,7 @@ Contains codes for testing the effects of each diversity facet on each stock and
 y ~ block + variable_of_interest + all_other_variables.
 Results are returned, with different p-values for main text and supplementary. 
 In the main text the p-value is calculated from type I sum of squares (using anova() function), where the target predictor is fitted first (after block).
-In contrast to all other predictors Fdbranch was fitted alone (after Block)  in the  model.
+In contrast to all other predictors Fdbranch is fitted alone (after Block)  in the  model.
 In the supplementary the p-value is calculated from type II sum of squares (using car::Anova() function), where the target predictor is fitted last after all predictors.
 In addition in the supplementary, species richness was fitted alone (after Block) in the model (predictor named "sowndiv_alone"). 
 
@@ -35,3 +35,10 @@ An analysis of variance with sequential sum of squares was applied (using anova(
 "Fig.3_Bargraph" - code for creating plots (main text) for the proportion of flows and stocks in the network that were significantly affected by each plant diversity facet when it was fitted first in the model.
 
 "Fig4_Contex_dependency" - code for creating plots for the biodiversity effects on fluxes grouped by ecosystem functions, and AG vs BG, and on stocks grouped by trophic groups, trophic levels and AG vs BG.
+
+
+## Contents of the folders
+
+### `Appendix/`
+
+Contains codes for producing figures and tables in Appendix. See Results/Appendix/Readme.md for details.
