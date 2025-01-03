@@ -4,6 +4,8 @@
 
 #### Buzhdygan et al. (2025) Plant diversity facets differentially affect energy dynamics in grasslands depending on trophic contexts. Ecological Monographs 
 
+Cite the code and data: [![DOI](https://zenodo.org/badge/610217643.svg)](https://doi.org/10.5281/zenodo.14592538)
+
 <!-- badges: start -->
 <!-- badges: end -->
 
